@@ -3,133 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glue Stick Bot - Commands</title>
+    <title>Glue Stick - Commands</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        header {
-            background-color: #f8f8f8;
-            color: white;
-            text-align: center;
-            padding: 1rem 0;
-        }
-        header img {
-            width: 100%;
-            max-width: 500px;
-            height: auto;
-        }
-        nav {
-            background-color: #333;
-            color: white;
-            padding: 0.5rem 0;
-        }
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        nav ul li {
-            margin: 5px 10px;
-        }
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        nav ul li a:hover {
-            background-color: #555;
-        }
-        main {
-            padding: 20px 0;
-            flex-grow: 1;
-        }
-        .content {
-            background-color: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h2 {
             color: #333;
-            border-bottom: 2px solid #66C2FF;
-            padding-bottom: 10px;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
         }
-        ul {
-            padding-left: 20px;
+        .logo {
+            display: block;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+            font-family: 'Poppins', sans-serif;
+        }
+        h1 {
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .menu {
+            background-color: #2c3e50;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .menu a {
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 8px 5px;
+            margin: 0 5px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        .menu a:hover, .menu a.active {
+            background-color: #34495e;
         }
         footer {
-            background-color: #333;
-            color: white;
             text-align: center;
-            padding: 1rem 0;
-            margin-top: auto;
+            padding: 20px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .command-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .command-list li {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .command-list li:last-child {
+            border-bottom: none;
+        }
+        .command-list code {
+            background-color: #eee;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .command-list p {
+            margin: 5px 0 0 0;
+            padding-left: 10px;
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="container">
-            <img src="Banner.png" alt="Glue Stick Bot">
-        </div>
+        <img src="Banner.png" alt="Glue Stick Logo" class="logo">
     </header>
-    <nav>
-        <div class="container">
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="privacy.html">Privacy Policy</a></li>
-                <li><a href="tos.html">Terms of Service</a></li>
-                <li><a href="commands.html">Commands</a></li>
-                <li><a href="https://discord.com/oauth2/authorize?client_id=1247291758857949224" target="_blank">Invite Bot</a></li>
-                <li><a href="https://discord.gg/dUZXnbQjGC" target="_blank">Support Server</a></li>
-                <li><a href="https://top.gg/bot/1247291758857949224/vote" target="_blank">Vote</a></li>
-            </ul>
-        </div>
-    </nav>
-    <main>
-        <div class="container">
-            <div class="content">
-                <h2>Glue Stick Bot Commands</h2>
-                <ul>
-                    <li><strong>/glue</strong> - Creates a text message that remains at the bottom of the channel</li>
-                    <li><strong>/gluepara</strong> - Glue a multi-line message to a channel</li>
-                    <li><strong>/glueembed</strong> - Creates a gluey embed message in the current channel</li>
-                    <li><strong>/unglue</strong> - Removes a sticky message from a channel</li>
-                    <li><strong>/editglue</strong> - Edits an existing glued message in the channel</li>
-                    <li><strong>/listglues</strong> - Lists all gluey messages in the server</li>
-                    <li><strong>/clearallglues</strong> - Clears all sticky messages in the server</li>
-                    <li><strong>/invite</strong> - Generates an invite link for the bot</li>
-                    <li><strong>/vote</strong> - Get the link to vote for the bot on top.gg</li>
-                    <li><strong>/support</strong> - Get an invite link to the Glue Stick support server</li>
-                    <li><strong>/ping</strong> - Checks the bot's latency</li>
-                    <li><strong>/permcheck</strong> - Checks the bot's permissions in the current channel</li>
-                    <li><strong>/help</strong> - Get information about Glue Stick commands and features</li>
-                </ul>
-                <p>For more detailed information on each command, please refer to our documentation in the support server.</p>
-            </div>
-        </div>
-    </main>
+    <div class="menu">
+        <a href="index.html">Home</a>
+        <a href="privacypolicy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+        <a href="commands.html" class="active">Commands</a>
+        <a href="https://discord.com/oauth2/authorize?client_id=1247291758857949224&permissions=563931890838592&integration_type=0&scope=bot+applications.commands" target="_blank">Invite</a>
+        <a href="https://discord.gg/dUZXnbQjGC" target="_blank">Support Server</a>
+        <a href="https://top.gg/bot/1247291758857949224/vote" target="_blank">Vote for Us</a>
+    </div>
+
+    <h1>Bot Commands</h1>
+
+    <div class="section">
+        <h2>Available Commands</h2>
+        <ul class="command-list">
+            <li><code>/glue</code><p>Glue a message to a channel.</p></li>
+            <li><code>/gluepara</code><p>Glue a multi-line message to a channel.</p></li>
+            <li><code>/glueembed</code><p>Glue an embed message to a channel.</p></li>
+            <li><code>/unglue</code><p>Removes a glued message from a channel.</p></li>
+            <li><code>/editglue</code><p>Edit the currently glued message in this channel.</p></li>
+            <li><code>/listglues</code><p>List all glued messages in the server.</p></li>
+            <li><code>/clearallglues</code><p>Clear all glued messages in the server.</p></li>
+            <li><code>/help</code><p>Get information about Glue Stick commands and features.</p></li>
+            <li><code>/ping</code><p>Replies with Pong! Shows bot latency and shard information.</p></li>
+            <li><code>/permcheck</code><p>Check Glue-Stick's permissions in the current channel.</p></li>
+            <li><code>/invite</code><p>Get an invite link for Glue Stick bot.</p></li>
+            <li><code>/support</code><p>Get an invite link to the Glue Stick support server.</p></li>
+            <li><code>/vote</code><p>Get the link to vote for the bot on top.gg.</p></li>
+        </ul>
+    </div>
+
     <footer>
-        <div class="container">
-            <p>&copy; 2024 Glue Stick Bot. All rights reserved.</p>
-        </div>
+        <p>&copy; 2025 Glue Stick. All rights reserved.</p>
     </footer>
 </body>
 </html>
