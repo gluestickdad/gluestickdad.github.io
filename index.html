@@ -3,174 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glue Stick Bot</title>
+    <title>Glue Stick - Discord Bot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        header {
-            background-color: #f8f8f8;
-            color: white;
-            text-align: center;
-            padding: 1rem 0;
-        }
-        header img {
-            width: 100%;
-            max-width: 500px;
-            height: auto;
-        }
-        nav {
-            background-color: #333;
-            color: white;
-            padding: 0.5rem 0;
-        }
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        nav ul li {
-            margin: 5px 10px;
-        }
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        nav ul li a:hover {
-            background-color: #555;
-        }
-        main {
-            padding: 20px 0;
-            flex-grow: 1;
-        }
-        .content {
-            background-color: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h2 {
             color: #333;
-            border-bottom: 2px solid #66C2FF;
-            padding-bottom: 10px;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
         }
-        ul {
-            padding-left: 20px;
+        .logo {
+            display: block;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+            font-family: 'Poppins', sans-serif;
+        }
+        h1 {
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .menu {
+            background-color: #2c3e50;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .menu a {
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 8px 5px;
+            margin: 0 5px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        .menu a:hover, .menu a.active {
+            background-color: #34495e;
         }
         footer {
-            background-color: #333;
-            color: white;
             text-align: center;
-            padding: 1rem 0;
-            margin-top: auto;
+            padding: 20px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .button {
+            background-color: #7289DA;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .button:hover {
+            background-color: #5a6eaf;
         }
         code {
-            background-color: #f0f0f0;
+            background-color: #eee;
             padding: 2px 4px;
             border-radius: 4px;
             font-family: monospace;
         }
-        ol {
-            padding-left: 20px;
-        }
-        h3 {
-            color: #000000;
-            margin-top: 20px;
-        }
-        a {
-            color: #66C2FF;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
+        .highlight-box {
+            background-color: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="container">
-            <img src="Banner.png" alt="Glue Stick Bot">
-        </div>
+        <img src="Banner.png" alt="Glue Stick Logo" class="logo">
     </header>
-    <nav>
-        <div class="container">
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="privacy.html">Privacy Policy</a></li>
-                <li><a href="tos.html">Terms of Service</a></li>
-                <li><a href="commands.html">Commands</a></li>
-                <li><a href="https://discord.com/oauth2/authorize?client_id=1247291758857949224" target="_blank">Invite Bot</a></li>
-                <li><a href="https://discord.gg/dUZXnbQjGC" target="_blank">Support Server</a></li>
-                <li><a href="https://top.gg/bot/1247291758857949224/vote" target="_blank">Vote</a></li>
-            </ul>
+    <div class="menu">
+        <a href="index.html" class="active">Home</a>
+        <a href="privacypolicy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+        <a href="commands.html">Commands</a>
+        <a href="https://discord.com/oauth2/authorize?client_id=1247291758857949224&permissions=563931890838592&integration_type=0&scope=bot+applications.commands" target="_blank">Invite</a>
+        <a href="https://discord.gg/dUZXnbQjGC" target="_blank">Support Server</a>
+        <a href="https://top.gg/bot/1247291758857949224/vote" target="_blank">Vote for Us</a>
+    </div>
+
+    <h1>Welcome to Glue Stick</h1>
+
+    <div class="section">
+        <h2>About Glue Stick</h2>
+        <p>Glue Stick is a specialized Discord bot designed to keep your important messages visible and accessible. Whether it's server rules, announcements, or key information, Glue Stick ensures your message stays at the bottom of the channel where everyone can see it.</p>
+        
+        <div class="highlight-box">
+            <strong>Perfect for:</strong> Server rules, announcements, important links, channel guidelines, and any message that needs to stay visible!
         </div>
-    </nav>
-    <main>
-        <div class="container">
-            <div class="content">
-                <h2>Welcome to Glue Stick Bot</h2>
-                <p>Glue Stick is a powerful, advanced Discord bot designed to help you keep important messages glued in your channels. Whether it's an announcement, a rule, or any message you want to keep visible at the bottom, Glue Stick ensures that it always stays the last message in the channel.</p>
-                
-                <h3>🎯 Key Features</h3>
+    </div>
+
+    <div class="section">
+        <h2>Key Features</h2>
+        <ul>
+            <li><strong>Persistent Messages:</strong> Keep any message "glued" to the bottom of a channel. The bot automatically maintains its position as the most recent message.</li>
+            <li><strong>Modern Slash Commands:</strong> Easy-to-use slash commands with no prefixes to remember - just type <code>/</code> and see the options.</li>
+            <li><strong>One Message Per Channel:</strong> Each channel can have one glued message, which can be easily updated or replaced.</li>
+            <li><strong>Automatic Management:</strong> The bot handles everything automatically - no manual intervention needed.</li>
+            <li><strong>Server-Wide Control:</strong> Administrators can manage all glued messages across the entire server.</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>Getting Started</h2>
+        <ol>
+            <li><strong>Invite Glue Stick:</strong> 
+                <a href="https://discord.com/oauth2/authorize?client_id=1247291758857949224&permissions=563931890838592&integration_type=0&scope=bot+applications.commands" class="button" target="_blank">Add to Your Server</a>
+            </li>
+            <li><strong>Grant Permissions:</strong> Make sure the bot has permission to send messages and manage messages in your desired channels.</li>
+            <li><strong>Use the Commands:</strong>
                 <ul>
-                    <li><strong>Gluey Messages:</strong> Keep any message pinned to the bottom of your channel without manually doing it. Also the bot will delete its previous message to keep the channel clean.</li>
-                    <li><strong>Slash Commands:</strong> Glue Stick features user-friendly slash commands, simplifying management without the need to memorize complex command prefixes. It also enables server admins to control access to commands without granting additional management permissions to members.</li>
-                    <li><strong>Multi-line Glue:</strong> Use the <code>/gluepara</code> command to glue multi-line messages to a channel.</li>
-                    <li><strong>Embed Messages:</strong> Create glued embed messages with the <code>/glueembed</code> command, allowing for rich content display.</li>
+                    <li><code>/glue [message]</code> - Create or update a glued message in the current channel</li>
+                    <li><code>/unglue</code> - Remove the glued message from the current channel</li>
+                    <li><code>/clearallglues</code> - Remove all glued messages from the entire server</li>
                 </ul>
+            </li>
+        </ol>
+    </div>
 
-                <h3>🚀 Getting Started</h3>
-                <ol>
-                    <li><strong>Invite Glue Stick:</strong> <a href="https://discord.com/oauth2/authorize?client_id=1247291758857949224&permissions=563931890838592&integration_type=0&scope=bot+applications.commands" target="_blank">Click here to invite Glue Stick to your server!</a></li>
-                    <li><strong>Set Up Your Glued Message:</strong> Use the <code>/glue</code> command to set your first Glued message in any channel.</li>
-                    <li><strong>Manage Your Glued Messages:</strong>
-                        <ul>
-                            <li><code>/glue [message]</code>: Glue a new message in the channel.</li>
-                            <li><code>/unglue</code>: Remove the current glued message in the channel.</li>
-                            <li><code>/clearallglues</code>: Remove all glued messages from all channels.</li>
-                        </ul>
-                    </li>
-                </ol>
+    <div class="section">
+        <h2>Need Help?</h2>
+        <p>Having trouble or have questions? Join our support server for assistance, updates, and to connect with other users!</p>
+        <a href="https://discord.gg/dUZXnbQjGC" class="button" target="_blank">Join Support Server</a>
+    </div>
 
-                <h3>💡 Pro Tips</h3>
-                <ul>
-                    <li><strong>One Gluey Per Channel:</strong> Glue Stick allows only one Glued message per channel, so if you try to glue another, you’ll replace the current glued message with the new one. No need to unglue the previous message first to change the glued message!</li>
-                    <li><strong>Auto-Refresh:</strong> Glue Stick will automatically delete and re-send the glued message every time new messages are posted while adhering to the Discord's ToS, ensuring it stays at the bottom.</li>
-                </ul>
+    <div class="section">
+        <h2>Legal Information</h2>
+        <p>Your use of Glue Stick is subject to our legal terms and privacy practices. Please review our <a href="privacypolicy.html">Privacy Policy</a> and <a href="terms.html">Terms of Service</a> for detailed information about data handling and usage terms.</p>
+    </div>
 
-                <h3>📢 Stay Updated</h3>
-                <p>Keep an eye on the <a href="https://discord.gg/dUZXnbQjGC" target="_blank">support server</a> for the latest features, bug fixes, and announcements. We're continuously improving Glue Stick to make it the best bot out there!</p>
-
-                <h3>🔗 Support and Feedback</h3>
-                <p>Have questions or need help? <a href="https://discord.gg/dUZXnbQjGC" target="_blank">Join our support server here</a>.</p>
-                <p>Got feedback or feature requests? We'd love to hear from you! Feel free to drop your suggestions in the support server.</p>
-
-                <p><strong>Start Gluing your important messages today with Glue Stick!</strong></p>
-            </div>
-        </div>
-    </main>
     <footer>
-        <div class="container">
-            <p>&copy; 2024 Glue Stick Bot. All rights reserved.</p>
-        </div>
+        <p>&copy; 2025 Glue Stick. All rights reserved.</p>
     </footer>
 </body>
 </html>
