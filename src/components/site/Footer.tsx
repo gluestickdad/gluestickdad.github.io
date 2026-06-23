@@ -75,7 +75,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-12 border-t border-border pt-6 text-center text-xs text-muted-foreground">
-          © 2025 Glue Stick. All rights reserved.
+          © {new Date().getFullYear()} Glue Stick. All rights reserved.
         </div>
       </div>
     </footer>

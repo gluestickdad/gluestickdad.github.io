@@ -5,8 +5,12 @@ import { Footer } from "./Footer";
 export function SiteLayout({ children }: { children: ReactNode }) {
   return (
     <div className="relative min-h-screen overflow-x-clip">
-      {/* Ambient background */}
-      <div className="pointer-events-none fixed inset-0 -z-10">
+      {/* Ambient background. overflow-hidden clips the blur blobs to the
+          viewport — without it they overflow ~360px past a phone's right edge
+          and cause horizontal scroll. The root's overflow-x-clip can't catch
+          them because this layer is position:fixed (its containing block is the
+          viewport, not the clipped ancestor). */}
+      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-60 dark:opacity-50" />
         <div className="absolute -top-40 left-1/2 h-[600px] w-[1100px] -translate-x-1/2 rounded-full bg-[#5865F2]/10 blur-[160px] dark:bg-[#5865F2]/20" />
         <div className="absolute top-[40%] right-[-10%] h-[500px] w-[600px] rounded-full bg-[#66C2FF]/10 blur-[140px] dark:bg-[#66C2FF]/15" />
