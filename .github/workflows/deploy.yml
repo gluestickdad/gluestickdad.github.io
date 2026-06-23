@@ -28,9 +28,9 @@ jobs:
 
       # TanStack Start prerenders every route to static HTML under dist/client
       # (includes the public/ assets and .nojekyll).
+      # No VITE_BASE_PATH: this is a user page served at the domain root
+      # (gluestickdad.github.io/), so vite.config.ts's "/" default is correct.
       - run: bun run build
-        env:
-          VITE_BASE_PATH: /test/
 
       # Serve the app shell for unknown paths so GitHub Pages shows our 404 UI
       # instead of the default GitHub 404.
