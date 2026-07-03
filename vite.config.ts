@@ -24,7 +24,17 @@ export default defineConfig({
     // public/ assets + .nojekyll); that folder is what the Pages workflow ships.
     tanstackStart({
       server: { entry: "./src/server.ts" },
-      prerender: { enabled: true, crawlLinks: true },
+      prerender: {
+        enabled: true,
+        crawlLinks: true,
+        // Crawling picks up #hash links and trailing-slash duplicates (e.g.
+        // /docs/); drop them so each page appears once in dist and the sitemap.
+        filter: (page) =>
+          !page.path.includes("#") && !(page.path.length > 1 && page.path.endsWith("/")),
+      },
+      // Emits dist/client/sitemap.xml from the full prerendered page list, so
+      // new routes are picked up with zero maintenance.
+      sitemap: { host: "https://gluestickdad.github.io" },
     }),
     viteReact(),
   ],

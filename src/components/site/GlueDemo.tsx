@@ -139,13 +139,13 @@ export function GlueDemo() {
           <div>
             <h3 className="text-xl font-semibold sm:text-2xl">See it in action</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              Glue a message, then send some chatter — it re-sticks to the bottom on its own.
+              Glue a message, then send some chatter — it refreshes back to the bottom on its own.
             </p>
           </div>
           {reposts > 0 && (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-blurple/10 px-3 py-1 text-xs font-semibold text-blurple">
               <RefreshCw className="h-3.5 w-3.5" />
-              Re-posted {reposts}×
+              Refreshed {reposts}×
             </span>
           )}
         </div>
@@ -191,6 +191,7 @@ export function GlueDemo() {
               onChange={(e) => setDraft(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && glue()}
               placeholder="Type a message to glue…"
+              aria-label="Type a message to glue"
               className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
             />
             <button
@@ -224,7 +225,7 @@ export function GlueDemo() {
         </div>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs text-muted-foreground">
           <span>
-            Re-posts after{" "}
+            Refreshes after{" "}
             <span className="font-semibold text-foreground">{REFRESH_MESSAGES} messages</span> or{" "}
             <span className="font-semibold text-foreground">{REFRESH_SECONDS}s</span>, whichever is
             first — tunable per channel with{" "}

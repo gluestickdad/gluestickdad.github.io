@@ -16,27 +16,35 @@ import { SiteLayout } from "@/components/site/Layout";
 import { ChatMockup } from "@/components/site/ChatMockup";
 import { GlueDemo } from "@/components/site/GlueDemo";
 import { INVITE_URL, SUPPORT_URL } from "@/lib/links";
+import { seo, jsonLd, SITE_URL, DEFAULT_OG_IMAGE } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Glue Stick — Keep important Discord messages always visible" },
-      {
-        name: "description",
-        content:
-          "Glue Stick is a Discord bot that glues any message to the bottom of a channel and keeps it there automatically.",
-      },
-      {
-        property: "og:title",
-        content: "Glue Stick — Keep important Discord messages always visible",
-      },
-      {
-        property: "og:description",
-        content:
-          "Glue any message to the bottom of a Discord channel so it never gets lost in the scroll.",
-      },
-    ],
-  }),
+  head: () => {
+    const s = seo({
+      title: "Glue Stick — Keep important Discord messages always visible",
+      description:
+        "Glue Stick is a Discord bot that glues any message to the bottom of a channel and keeps it there automatically.",
+      path: "/",
+    });
+    return {
+      ...s,
+      meta: [
+        ...s.meta,
+        jsonLd({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          name: "Glue Stick",
+          url: SITE_URL,
+          image: `${SITE_URL}${DEFAULT_OG_IMAGE}`,
+          applicationCategory: "CommunicationApplication",
+          operatingSystem: "Discord",
+          description:
+            "Glue Stick is a Discord bot that glues any message to the bottom of a channel and keeps it there automatically — so rules, announcements, and key info never get lost.",
+          offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+        }),
+      ],
+    };
+  },
   component: Index,
 });
 
@@ -44,7 +52,7 @@ const features = [
   {
     icon: Pin,
     title: "Always at the bottom",
-    body: "Pin rules, announcements, or links and Glue Stick automatically re-posts them to the bottom — never buried under new chat.",
+    body: "Pin rules, announcements, or links and Glue Stick automatically refreshes them to the bottom — never buried under new chat.",
   },
   {
     icon: Terminal,
@@ -59,7 +67,7 @@ const features = [
   {
     icon: RefreshCw,
     title: "Configurable refresh",
-    body: "Tune how often a glued message re-posts — after a set number of messages or a time interval, per channel.",
+    body: "Tune how often a glued message refreshes — after a set number of messages or a time interval, per channel.",
   },
   {
     icon: SquarePen,

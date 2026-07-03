@@ -1,16 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalLayout } from "@/components/site/LegalLayout";
 import { SUPPORT_URL } from "@/lib/links";
+import { seo } from "@/lib/seo";
 
 export const Route = createFileRoute("/privacy")({
-  head: () => ({
-    meta: [
-      { title: "Privacy Policy — Glue Stick" },
-      { name: "description", content: "How Glue Stick collects, uses, and protects data." },
-      { property: "og:title", content: "Privacy Policy — Glue Stick" },
-      { property: "og:description", content: "How Glue Stick collects, uses, and protects data." },
-    ],
-  }),
+  head: () =>
+    seo({
+      title: "Privacy Policy — Glue Stick",
+      description: "How Glue Stick collects, uses, and protects data.",
+      path: "/privacy",
+    }),
   component: PrivacyPage,
 });
 

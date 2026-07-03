@@ -25,6 +25,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link to="/docs" className="text-muted-foreground hover:text-foreground">
+                  Docs
+                </Link>
+              </li>
+              <li>
                 <a
                   href={INVITE_URL}
                   target="_blank"

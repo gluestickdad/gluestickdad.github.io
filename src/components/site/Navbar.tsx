@@ -8,6 +8,7 @@ import { INVITE_URL, SUPPORT_URL, VOTE_URL } from "@/lib/links";
 const navLinks = [
   { label: "Home", to: "/" as const, internal: true },
   { label: "Commands", to: "/commands" as const, internal: true },
+  { label: "Docs", to: "/docs" as const, internal: true },
   { label: "Privacy", to: "/privacy" as const, internal: true },
   { label: "Terms", to: "/terms" as const, internal: true },
 ];
@@ -65,6 +66,8 @@ export function Navbar() {
           <ThemeToggle />
           <button
             aria-label="Toggle menu"
+            aria-expanded={open}
+            aria-controls="mobile-nav"
             onClick={() => setOpen((s) => !s)}
             className="grid h-10 w-10 place-items-center rounded-md text-foreground hover:bg-foreground/5"
           >
@@ -73,7 +76,10 @@ export function Navbar() {
         </div>
       </div>
       {open && (
-        <div className="border-t border-border bg-background/95 backdrop-blur-xl md:hidden">
+        <div
+          id="mobile-nav"
+          className="border-t border-border bg-background/95 backdrop-blur-xl md:hidden"
+        >
           <div className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4 sm:px-6">
             {navLinks.map((l) => (
               <Link

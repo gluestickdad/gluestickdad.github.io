@@ -1,16 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalLayout } from "@/components/site/LegalLayout";
 import { SUPPORT_URL } from "@/lib/links";
+import { seo } from "@/lib/seo";
 
 export const Route = createFileRoute("/terms")({
-  head: () => ({
-    meta: [
-      { title: "Terms of Service — Glue Stick" },
-      { name: "description", content: "Terms governing use of the Glue Stick Discord bot." },
-      { property: "og:title", content: "Terms of Service — Glue Stick" },
-      { property: "og:description", content: "Terms governing use of the Glue Stick Discord bot." },
-    ],
-  }),
+  head: () =>
+    seo({
+      title: "Terms of Service — Glue Stick",
+      description: "Terms governing use of the Glue Stick Discord bot.",
+      path: "/terms",
+    }),
   component: TermsPage,
 });
 

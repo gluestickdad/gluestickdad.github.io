@@ -12,7 +12,15 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as CommandsRouteImport } from './routes/commands'
+import { Route as DocsRouteRouteImport } from './routes/docs/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DocsIndexRouteImport } from './routes/docs/index'
+import { Route as DocsSupportRouteImport } from './routes/docs/support'
+import { Route as DocsPermissionsRouteImport } from './routes/docs/permissions'
+import { Route as DocsGettingStartedRouteImport } from './routes/docs/getting-started'
+import { Route as DocsFaqRouteImport } from './routes/docs/faq'
+import { Route as DocsConfigurationRouteImport } from './routes/docs/configuration'
+import { Route as DocsCommandsRouteImport } from './routes/docs/commands'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -29,41 +37,141 @@ const CommandsRoute = CommandsRouteImport.update({
   path: '/commands',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DocsRouteRoute = DocsRouteRouteImport.update({
+  id: '/docs',
+  path: '/docs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DocsIndexRoute = DocsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DocsRouteRoute,
+} as any)
+const DocsSupportRoute = DocsSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => DocsRouteRoute,
+} as any)
+const DocsPermissionsRoute = DocsPermissionsRouteImport.update({
+  id: '/permissions',
+  path: '/permissions',
+  getParentRoute: () => DocsRouteRoute,
+} as any)
+const DocsGettingStartedRoute = DocsGettingStartedRouteImport.update({
+  id: '/getting-started',
+  path: '/getting-started',
+  getParentRoute: () => DocsRouteRoute,
+} as any)
+const DocsFaqRoute = DocsFaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => DocsRouteRoute,
+} as any)
+const DocsConfigurationRoute = DocsConfigurationRouteImport.update({
+  id: '/configuration',
+  path: '/configuration',
+  getParentRoute: () => DocsRouteRoute,
+} as any)
+const DocsCommandsRoute = DocsCommandsRouteImport.update({
+  id: '/commands',
+  path: '/commands',
+  getParentRoute: () => DocsRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/docs': typeof DocsRouteRouteWithChildren
   '/commands': typeof CommandsRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
+  '/docs/commands': typeof DocsCommandsRoute
+  '/docs/configuration': typeof DocsConfigurationRoute
+  '/docs/faq': typeof DocsFaqRoute
+  '/docs/getting-started': typeof DocsGettingStartedRoute
+  '/docs/permissions': typeof DocsPermissionsRoute
+  '/docs/support': typeof DocsSupportRoute
+  '/docs/': typeof DocsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/commands': typeof CommandsRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
+  '/docs/commands': typeof DocsCommandsRoute
+  '/docs/configuration': typeof DocsConfigurationRoute
+  '/docs/faq': typeof DocsFaqRoute
+  '/docs/getting-started': typeof DocsGettingStartedRoute
+  '/docs/permissions': typeof DocsPermissionsRoute
+  '/docs/support': typeof DocsSupportRoute
+  '/docs': typeof DocsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/docs': typeof DocsRouteRouteWithChildren
   '/commands': typeof CommandsRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
+  '/docs/commands': typeof DocsCommandsRoute
+  '/docs/configuration': typeof DocsConfigurationRoute
+  '/docs/faq': typeof DocsFaqRoute
+  '/docs/getting-started': typeof DocsGettingStartedRoute
+  '/docs/permissions': typeof DocsPermissionsRoute
+  '/docs/support': typeof DocsSupportRoute
+  '/docs/': typeof DocsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/commands' | '/privacy' | '/terms'
+  fullPaths:
+    | '/'
+    | '/docs'
+    | '/commands'
+    | '/privacy'
+    | '/terms'
+    | '/docs/commands'
+    | '/docs/configuration'
+    | '/docs/faq'
+    | '/docs/getting-started'
+    | '/docs/permissions'
+    | '/docs/support'
+    | '/docs/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/commands' | '/privacy' | '/terms'
-  id: '__root__' | '/' | '/commands' | '/privacy' | '/terms'
+  to:
+    | '/'
+    | '/commands'
+    | '/privacy'
+    | '/terms'
+    | '/docs/commands'
+    | '/docs/configuration'
+    | '/docs/faq'
+    | '/docs/getting-started'
+    | '/docs/permissions'
+    | '/docs/support'
+    | '/docs'
+  id:
+    | '__root__'
+    | '/'
+    | '/docs'
+    | '/commands'
+    | '/privacy'
+    | '/terms'
+    | '/docs/commands'
+    | '/docs/configuration'
+    | '/docs/faq'
+    | '/docs/getting-started'
+    | '/docs/permissions'
+    | '/docs/support'
+    | '/docs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DocsRouteRoute: typeof DocsRouteRouteWithChildren
   CommandsRoute: typeof CommandsRoute
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
@@ -92,6 +200,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CommandsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/docs': {
+      id: '/docs'
+      path: '/docs'
+      fullPath: '/docs'
+      preLoaderRoute: typeof DocsRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -99,11 +214,85 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/docs/': {
+      id: '/docs/'
+      path: '/'
+      fullPath: '/docs/'
+      preLoaderRoute: typeof DocsIndexRouteImport
+      parentRoute: typeof DocsRouteRoute
+    }
+    '/docs/support': {
+      id: '/docs/support'
+      path: '/support'
+      fullPath: '/docs/support'
+      preLoaderRoute: typeof DocsSupportRouteImport
+      parentRoute: typeof DocsRouteRoute
+    }
+    '/docs/permissions': {
+      id: '/docs/permissions'
+      path: '/permissions'
+      fullPath: '/docs/permissions'
+      preLoaderRoute: typeof DocsPermissionsRouteImport
+      parentRoute: typeof DocsRouteRoute
+    }
+    '/docs/getting-started': {
+      id: '/docs/getting-started'
+      path: '/getting-started'
+      fullPath: '/docs/getting-started'
+      preLoaderRoute: typeof DocsGettingStartedRouteImport
+      parentRoute: typeof DocsRouteRoute
+    }
+    '/docs/faq': {
+      id: '/docs/faq'
+      path: '/faq'
+      fullPath: '/docs/faq'
+      preLoaderRoute: typeof DocsFaqRouteImport
+      parentRoute: typeof DocsRouteRoute
+    }
+    '/docs/configuration': {
+      id: '/docs/configuration'
+      path: '/configuration'
+      fullPath: '/docs/configuration'
+      preLoaderRoute: typeof DocsConfigurationRouteImport
+      parentRoute: typeof DocsRouteRoute
+    }
+    '/docs/commands': {
+      id: '/docs/commands'
+      path: '/commands'
+      fullPath: '/docs/commands'
+      preLoaderRoute: typeof DocsCommandsRouteImport
+      parentRoute: typeof DocsRouteRoute
+    }
   }
 }
 
+interface DocsRouteRouteChildren {
+  DocsCommandsRoute: typeof DocsCommandsRoute
+  DocsConfigurationRoute: typeof DocsConfigurationRoute
+  DocsFaqRoute: typeof DocsFaqRoute
+  DocsGettingStartedRoute: typeof DocsGettingStartedRoute
+  DocsPermissionsRoute: typeof DocsPermissionsRoute
+  DocsSupportRoute: typeof DocsSupportRoute
+  DocsIndexRoute: typeof DocsIndexRoute
+}
+
+const DocsRouteRouteChildren: DocsRouteRouteChildren = {
+  DocsCommandsRoute: DocsCommandsRoute,
+  DocsConfigurationRoute: DocsConfigurationRoute,
+  DocsFaqRoute: DocsFaqRoute,
+  DocsGettingStartedRoute: DocsGettingStartedRoute,
+  DocsPermissionsRoute: DocsPermissionsRoute,
+  DocsSupportRoute: DocsSupportRoute,
+  DocsIndexRoute: DocsIndexRoute,
+}
+
+const DocsRouteRouteWithChildren = DocsRouteRoute._addFileChildren(
+  DocsRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DocsRouteRoute: DocsRouteRouteWithChildren,
   CommandsRoute: CommandsRoute,
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,

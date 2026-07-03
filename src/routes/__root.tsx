@@ -57,12 +57,12 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           >
             Try again
           </button>
-          <a
-            href="/"
+          <Link
+            to="/"
             className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
           >
             Go home
-          </a>
+          </Link>
         </div>
       </div>
     </div>
@@ -93,17 +93,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://gluestickdad.github.io/" },
       // Social-preview images must be absolute URLs (the deploy domain).
-      { property: "og:image", content: "https://gluestickdad.github.io/banner-dark.png" },
+      { property: "og:image", content: "https://gluestickdad.github.io/og-image.png" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "https://gluestickdad.github.io/banner-dark.png" },
+      { name: "twitter:image", content: "https://gluestickdad.github.io/og-image.png" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", type: "image/jpeg", href: `${import.meta.env.BASE_URL}glue-stick-avatar.jpeg` },
-      { rel: "apple-touch-icon", href: `${import.meta.env.BASE_URL}glue-stick-avatar.jpeg` },
+      { rel: "icon", href: `${import.meta.env.BASE_URL}favicon.ico`, sizes: "48x48" },
+      {
+        rel: "icon",
+        type: "image/png",
+        sizes: "32x32",
+        href: `${import.meta.env.BASE_URL}favicon-32x32.png`,
+      },
+      { rel: "apple-touch-icon", href: `${import.meta.env.BASE_URL}apple-touch-icon.png` },
+      { rel: "manifest", href: `${import.meta.env.BASE_URL}site.webmanifest` },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -124,6 +131,9 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         {/* Apply the saved/OS theme before paint to avoid a flash. */}
         <script dangerouslySetInnerHTML={{ __html: NO_FLASH_SCRIPT }} />
+        {/* Raw JSX (not head()): head() meta dedupes by name and would drop one of the pair. */}
+        <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f8fafd" />
+        <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#080d18" />
         <HeadContent />
       </head>
       <body>

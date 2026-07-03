@@ -121,6 +121,7 @@ function Sidebar({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search commands"
+            aria-label="Search commands"
             className="w-full bg-transparent text-xs text-foreground outline-none placeholder:text-foreground/40"
           />
         </div>
@@ -251,7 +252,7 @@ export function CommandExplorer() {
           break;
         case "flood": {
           const n = ac.count;
-          setCaption({ text: `Re-sticks after ${n} messages · 0/${n}`, spin: true });
+          setCaption({ text: `Refreshes after ${n} messages · 0/${n}`, spin: true });
           for (let i = 0; i < n; i++) {
             if (dead()) return;
             const m = FLOOD[i % FLOOD.length];
@@ -262,7 +263,7 @@ export function CommandExplorer() {
                 </DiscordMessage>
               ),
             });
-            setCaption({ text: `Re-sticks after ${n} messages · ${i + 1}/${n}`, spin: true });
+            setCaption({ text: `Refreshes after ${n} messages · ${i + 1}/${n}`, spin: true });
             await sleep(620);
           }
           if (dead()) return;
@@ -274,7 +275,7 @@ export function CommandExplorer() {
               { id: idRef.current++, node, glue: true },
             ]);
           }
-          setCaption({ text: "Re-posted to keep it visible" });
+          setCaption({ text: "Refreshed to keep it visible" });
           await sleep(1100);
           if (dead()) return;
           setCaption(null);

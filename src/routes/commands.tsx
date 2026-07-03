@@ -1,24 +1,16 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/site/Layout";
 import { CommandExplorer } from "@/components/site/CommandExplorer";
+import { seo } from "@/lib/seo";
 
 export const Route = createFileRoute("/commands")({
-  head: () => ({
-    meta: [
-      { title: "Commands — Glue Stick" },
-      {
-        name: "description",
-        content:
-          "Explore every Glue Stick slash command in a live Discord-style mockup — see exactly how each one runs.",
-      },
-      { property: "og:title", content: "Commands — Glue Stick" },
-      {
-        property: "og:description",
-        content:
-          "Explore every Glue Stick slash command in a live Discord-style mockup — see exactly how each one runs.",
-      },
-    ],
-  }),
+  head: () =>
+    seo({
+      title: "Commands — Glue Stick",
+      description:
+        "Explore every Glue Stick slash command in a live Discord-style mockup — see exactly how each one runs.",
+      path: "/commands",
+    }),
   component: CommandsPage,
 });
 
@@ -32,7 +24,11 @@ function CommandsPage() {
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
             Pick a command from the sidebar to see exactly how it runs in Discord — the slash
-            options, any pop-up, and the bot's reply.
+            options, any pop-up, and the bot's reply. Prefer written details?{" "}
+            <Link to="/docs/commands" className="text-sky underline-offset-4 hover:underline">
+              Read the full command reference
+            </Link>
+            .
           </p>
         </div>
       </section>

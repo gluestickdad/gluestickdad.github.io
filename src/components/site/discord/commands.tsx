@@ -9,12 +9,13 @@ import {
   type SlashOpt,
 } from "./index";
 import { INVITE_URL, SUPPORT_URL, VOTE_URL } from "@/lib/links";
+import { ThemeBanner } from "@/components/site/ThemeBanner";
 
 /**
  * Each command is a small script the CommandExplorer "plays" as a sequence of
  * actions: seed any pre-existing messages, type + send the command, open/fill a
  * modal, post replies, and — for the glue commands — flood the channel to show
- * it re-stick. Kept faithful to the real bot in `commands/*.js`.
+ * it refresh. Kept faithful to the real bot in `commands/*.js`.
  */
 export type Action =
   | { a: "seed"; node: ReactNode } // pre-existing message (instant)
@@ -26,7 +27,7 @@ export type Action =
   | { a: "glue"; node: ReactNode } // post a glued message (animated, tracked)
   | { a: "replaceGlue"; node: ReactNode } // delete tracked glue, post a new one
   | { a: "deleteGlue" } // animate-remove the tracked glue
-  | { a: "flood"; count: number } // send `count` chat msgs, then re-post the glue
+  | { a: "flood"; count: number } // send `count` chat msgs, then refresh the glue
   | { a: "click"; label: string }; // "click" a button
 
 export type CommandDef = {
@@ -72,12 +73,7 @@ const HELP_LIST = `/glue — Glue a message to a channel
 /invite · /vote · /support · /ping · /permcheck · /help`;
 
 // Theme-aware banner used to show an image inside the /glueembed embed.
-const EMBED_IMAGE = (
-  <>
-    <img src={`${import.meta.env.BASE_URL}banner-light.png`} alt="Server events banner" className="w-full dark:hidden" />
-    <img src={`${import.meta.env.BASE_URL}banner-dark.png`} alt="Server events banner" className="hidden w-full dark:block" />
-  </>
-);
+const EMBED_IMAGE = <ThemeBanner />;
 
 /* ----------------------------------------------------- reusable messages */
 
@@ -300,7 +296,7 @@ export const COMMANDS: CommandDef[] = [
             </p>
             <p className="text-foreground/70">
               <B>How refresh works now:</B>
-              <br />• Re-posts after 7 messages instead of 5
+              <br />• Refreshes after 7 messages instead of 5
             </p>
           </BotMessage>
         ),
