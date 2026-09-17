@@ -3,11 +3,12 @@ import { ArrowRight } from "lucide-react";
 import { DocsPage } from "@/components/docs/DocsPage";
 import { INVITE_URL } from "@/lib/links";
 import { DOCS_NAV } from "@/lib/docs/nav";
-import { seo } from "@/lib/seo";
+import { docsSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/docs/")({
   head: () =>
-    seo({
+    docsSeo({
+      breadcrumb: "Docs",
       title: "Documentation — Glue Stick",
       description:
         "Everything you need to set up and use Glue Stick: getting started, the full command reference, permissions, configuration, and troubleshooting.",
@@ -41,7 +42,7 @@ function DocsIndex() {
                   <Link
                     key={p.to}
                     to={p.to}
-                    className="glass group rounded-xl p-5 transition-transform hover:-translate-y-0.5"
+                    className="glass group rounded-xl p-6 transition-colors duration-150 hover:border-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <span className="flex items-center justify-between font-semibold text-foreground">
                       {p.title}
@@ -63,12 +64,15 @@ function DocsIndex() {
           href={INVITE_URL}
           target="_blank"
           rel="noreferrer"
-          className="text-sky underline-offset-4 hover:underline"
+          className="text-accent-strong underline-offset-4 hover:underline"
         >
           adding Glue Stick to your server
         </a>
         , then follow{" "}
-        <Link to="/docs/getting-started" className="text-sky underline-offset-4 hover:underline">
+        <Link
+          to="/docs/getting-started"
+          className="text-accent-strong underline-offset-4 hover:underline"
+        >
           Getting Started
         </Link>{" "}
         — you'll have your first glued message in under a minute.

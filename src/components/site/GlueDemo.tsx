@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { MessagesSquare, RefreshCw, Send, X } from "lucide-react";
 import { DiscordPanel, DiscordMessage, BotMessage, renderContent } from "./discord";
+import { Button } from "@/components/ui/button";
 
 type MemberMsg = {
   kind: "msg";
@@ -18,12 +19,16 @@ const REFRESH_MESSAGES = 5;
 const REFRESH_SECONDS = 15;
 
 const POOL: Pick<MemberMsg, "name" | "color" | "text">[] = [
-  { name: "Riley", color: "#3aa0ff", text: "just joined — this place is active!" },
-  { name: "Kai", color: "#1fb877", text: "gg everyone, that was close" },
-  { name: "Noor", color: "#d061ff", text: "where do I get the event role again?" },
-  { name: "Theo", color: "#e08a2b", text: "lol nice clip 😂" },
-  { name: "Vera", color: "#ff6b81", text: "anyone got the patch notes?" },
-  { name: "Dex", color: "#52d0c8", text: "brb grabbing food" },
+  { name: "Riley", color: "var(--discord-name-blue)", text: "just joined — this place is active!" },
+  { name: "Kai", color: "var(--discord-name-green)", text: "gg everyone, that was close" },
+  {
+    name: "Noor",
+    color: "var(--discord-name-purple)",
+    text: "where do I get the event role again?",
+  },
+  { name: "Theo", color: "var(--discord-name-orange)", text: "lol nice clip 😂" },
+  { name: "Vera", color: "var(--discord-name-pink)", text: "anyone got the patch notes?" },
+  { name: "Dex", color: "var(--discord-name-teal)", text: "brb grabbing food" },
 ];
 
 const SEED: FeedItem[] = [
@@ -31,7 +36,7 @@ const SEED: FeedItem[] = [
     kind: "msg",
     id: 1,
     name: "Riley",
-    color: "#3aa0ff",
+    color: "var(--discord-name-blue)",
     time: "7:41 PM",
     text: "yo what's the plan for tonight?",
   },
@@ -39,7 +44,7 @@ const SEED: FeedItem[] = [
     kind: "msg",
     id: 2,
     name: "Kai",
-    color: "#1fb877",
+    color: "var(--discord-name-green)",
     time: "7:42 PM",
     text: "raid at 8, don't be late this time 😅",
   },
@@ -133,17 +138,19 @@ export function GlueDemo() {
   const pending = glued !== null && sinceRefresh > 0;
 
   return (
-    <div className="glass overflow-hidden rounded-3xl p-1.5">
-      <div className="rounded-[20px] bg-background/40 p-5 sm:p-7">
-        <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+    <div className="glass overflow-hidden rounded-2xl p-6 sm:p-8">
+      <div>
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h3 className="text-xl font-semibold sm:text-2xl">See it in action</h3>
+            {/* h2, not h3: this is a top-level homepage section, and the page's
+                only h1 is the hero — an h3 here would skip a level. */}
+            <h2 className="text-xl font-semibold sm:text-2xl">See it in action</h2>
             <p className="mt-1 text-sm text-muted-foreground">
               Glue a message, then send some chatter — it refreshes back to the bottom on its own.
             </p>
           </div>
           {reposts > 0 && (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-blurple/10 px-3 py-1 text-xs font-semibold text-blurple">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-accent-strong">
               <RefreshCw className="h-3.5 w-3.5" />
               Refreshed {reposts}×
             </span>
@@ -166,7 +173,7 @@ export function GlueDemo() {
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, ease: "easeOut" }}
-                  className="rounded-lg bg-blurple/[0.05] px-2.5 py-2 ring-1 ring-blurple/20"
+                  className="rounded-lg bg-primary/[0.05] px-2.5 py-2 ring-1 ring-primary/20"
                 >
                   <BotMessage time={`Today at ${gluedTime}`} muted>
                     <p>{renderContent(glued)}</p>
@@ -184,8 +191,10 @@ export function GlueDemo() {
         </DiscordPanel>
 
         {/* Controls */}
-        <div className="mt-4 flex flex-col gap-2.5 sm:flex-row">
-          <div className="flex flex-1 items-center gap-2 rounded-full border border-border bg-foreground/5 px-4 py-2 focus-within:border-blurple/50">
+        <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+          {/* The ring lives on the wrapper because the input is borderless inside it;
+              a 1px border tint alone isn't a visible-enough focus indicator. */}
+          <div className="flex flex-1 items-center gap-2 rounded-lg border border-border bg-foreground/5 py-1 pr-1 pl-4 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background">
             <input
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
@@ -194,32 +203,21 @@ export function GlueDemo() {
               aria-label="Type a message to glue"
               className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
             />
-            <button
-              onClick={glue}
-              disabled={!draft.trim()}
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-gradient-to-r from-[#5865F2] to-[#66C2FF] px-4 py-1.5 text-xs font-semibold text-white transition-opacity disabled:opacity-40"
-            >
+            <Button onClick={glue} disabled={!draft.trim()} size="sm" className="shrink-0">
               <Send className="h-3.5 w-3.5" />
               Glue
-            </button>
+            </Button>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              onClick={sendChat}
-              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-foreground/5 px-4 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-foreground/10"
-            >
+            <Button onClick={sendChat} variant="outline" size="sm">
               <MessagesSquare className="h-4 w-4" />
               Send a chat message
-            </button>
+            </Button>
             {glued && (
-              <button
-                onClick={unglue}
-                aria-label="Unglue"
-                className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-2 text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground"
-              >
+              <Button onClick={unglue} variant="ghost" size="sm" className="text-muted-foreground">
                 <X className="h-4 w-4" />
                 Unglue
-              </button>
+              </Button>
             )}
           </div>
         </div>
@@ -229,13 +227,13 @@ export function GlueDemo() {
             <span className="font-semibold text-foreground">{REFRESH_MESSAGES} messages</span> or{" "}
             <span className="font-semibold text-foreground">{REFRESH_SECONDS}s</span>, whichever is
             first — tunable per channel with{" "}
-            <code className="rounded bg-code-bg px-1.5 py-0.5 font-mono text-code-fg">
+            <code className="rounded-md bg-code-bg px-1.5 py-0.5 font-mono text-code-fg">
               /refreshconfig
             </code>
             .
           </span>
           {pending && (
-            <span className="shrink-0 font-medium text-blurple">
+            <span className="shrink-0 font-medium text-accent-strong">
               {sinceRefresh}/{REFRESH_MESSAGES} messages · {secondsLeft}s left
             </span>
           )}

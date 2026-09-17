@@ -30,7 +30,7 @@ export function DocsHeading({
       <a
         href={`#${id}`}
         aria-label="Link to section"
-        className="ml-2 text-muted-foreground/0 transition-colors group-hover:text-muted-foreground hover:!text-sky focus-visible:text-muted-foreground"
+        className="ml-2 text-muted-foreground/0 transition-colors group-hover:text-muted-foreground hover:!text-accent-strong focus-visible:text-muted-foreground"
       >
         #
       </a>

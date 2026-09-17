@@ -15,7 +15,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
       onClick={toggle}
       aria-label={label}
       title={label}
-      className={`grid h-10 w-10 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground ${className}`}
+      className={`grid h-10 w-10 place-items-center rounded-lg text-muted-foreground transition-colors duration-150 hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${className}`}
     >
       <Icon className="h-[18px] w-[18px]" />
     </button>

@@ -4,11 +4,12 @@ import { CodeBlock } from "@/components/docs/CodeBlock";
 import { DocsHeading } from "@/components/docs/DocsHeading";
 import { DocsPage } from "@/components/docs/DocsPage";
 import { INVITE_URL } from "@/lib/links";
-import { seo } from "@/lib/seo";
+import { docsSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/docs/getting-started")({
   head: () =>
-    seo({
+    docsSeo({
+      breadcrumb: "Getting Started",
       title: "Getting Started — Glue Stick Docs",
       description:
         "Invite Glue Stick, verify its permissions with /permcheck, and glue your first message — all in under a minute.",
@@ -25,7 +26,7 @@ const TOC = [
   { id: "next-steps", label: "Next steps" },
 ];
 
-const link = "text-sky underline-offset-4 hover:underline";
+const link = "text-accent-strong underline-offset-4 hover:underline";
 
 function GettingStartedPage() {
   return (
@@ -67,7 +68,8 @@ function GettingStartedPage() {
       </p>
       <Callout variant="tip">
         Need paragraphs or line breaks? Use <code>/gluepara</code> instead. Want a title, color, and
-        images? Use <code>/glueembed</code>. Both open a pop-up form.
+        images? Use <code>/glueembed</code> — images are uploaded right inside the form and hosted
+        permanently. Both open a pop-up form.
       </Callout>
 
       <DocsHeading id="what-happens-next">What happens next</DocsHeading>

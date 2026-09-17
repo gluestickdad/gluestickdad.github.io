@@ -1,13 +1,30 @@
 import type { ReactNode } from "react";
-import { BellOff, Check, ExternalLink, EyeOff, Hash } from "lucide-react";
+import { BellOff, Check, ChevronDown, ExternalLink, EyeOff, Hash, Paperclip } from "lucide-react";
 
 /**
  * Lightweight Discord-style UI primitives shared by the home-page chat mockup,
  * the live "glue" demo, and the command previews. Surfaces use theme-aware
  * tokens (--discord-bg / --discord-elevated) so they read in light and dark.
+ *
+ * ---------------------------------------------------------------------------
+ * DESIGN-SYSTEM EXEMPTION — this file only.
+ *
+ * This module reproduces Discord's own chrome, so it deliberately sits outside
+ * the site's design system:
+ *   - Discord's radii: rounded-[3px] buttons, rounded-[4px] embeds, [16px] rail
+ *   - Discord's hexes: #5865F2 blurple, #4e5058, #248046, #da373c
+ *   - Discord's type scale: the 9-13px sizes
+ * These are fidelity, not drift. Tokenizing them or folding them into the site
+ * ramp would make the mockup stop looking like Discord. Do not "fix" them.
+ * Everything OUTSIDE this directory follows the system in styles.css.
+ * ---------------------------------------------------------------------------
  */
 
-export const BOT_AVATAR = `${import.meta.env.BASE_URL}glue-stick-avatar.jpeg`;
+/** 80px variants — displayed at 36-64px, so this covers 2x. See scripts/generate-assets.ts. */
+export const AVATAR_WEBP = `${import.meta.env.BASE_URL}avatar-80.webp`;
+export const AVATAR_PNG = `${import.meta.env.BASE_URL}avatar-80.png`;
+/** Single-src alias for places that need a plain string (embed thumbnails). */
+export const BOT_AVATAR = AVATAR_PNG;
 export const BOT_NAME = "Glue Stick";
 
 /* ------------------------------------------------------------------ badges */
@@ -25,14 +42,21 @@ export function AppBadge() {
 
 export function BotAvatar({ size = 40 }: { size?: number }) {
   return (
-    <img
-      src={BOT_AVATAR}
-      alt={BOT_NAME}
-      width={size}
-      height={size}
-      style={{ width: size, height: size }}
-      className="shrink-0 rounded-full object-cover"
-    />
+    <picture>
+      <source type="image/webp" srcSet={AVATAR_WEBP} />
+      <img
+        src={AVATAR_PNG}
+        // Decorative: BotMessage renders the bot's name as text next to this,
+        // so an alt would repeat it on every message in a transcript.
+        alt=""
+        width={size}
+        height={size}
+        loading="lazy"
+        decoding="async"
+        style={{ width: size, height: size }}
+        className="shrink-0 rounded-full object-cover"
+      />
+    </picture>
   );
 }
 
@@ -48,11 +72,8 @@ export function UserAvatar({
   return (
     <span
       className="grid shrink-0 place-items-center rounded-full text-xs font-bold text-white"
-      style={{
-        width: size,
-        height: size,
-        background: `linear-gradient(135deg, ${color}, #5865F2)`,
-      }}
+      // Flat fill: Discord's own default avatars are a solid colour, not a gradient.
+      style={{ width: size, height: size, background: color }}
     >
       {name.slice(0, 1).toUpperCase()}
     </span>
@@ -63,7 +84,7 @@ export function UserAvatar({
 
 export function Mention({ kind, children }: { kind: "channel" | "user"; children: ReactNode }) {
   return (
-    <span className="rounded bg-blurple/15 px-1 font-medium text-blurple [a&]:hover:underline">
+    <span className="rounded bg-primary/15 px-1 font-medium text-accent-strong [a&]:hover:underline">
       {kind === "channel" ? <Hash className="mb-0.5 mr-px inline h-3 w-3" /> : "@"}
       {children}
     </span>
@@ -110,7 +131,7 @@ export function DiscordMessage({
           <span className="text-sm font-semibold" style={{ color }}>
             {name}
           </span>
-          <span className="text-[10px] text-foreground/45">{time}</span>
+          <span className="text-[10px] text-muted-foreground">{time}</span>
         </div>
         <div className="text-sm leading-relaxed text-foreground/90">{children}</div>
       </div>
@@ -138,8 +159,8 @@ export function BotMessage({
             {BOT_NAME}
           </span>
           <AppBadge />
-          <span className="text-[10px] text-foreground/45">{time}</span>
-          {muted && <BellOff className="h-3 w-3 text-foreground/35" />}
+          <span className="text-[10px] text-muted-foreground">{time}</span>
+          {muted && <BellOff className="h-3 w-3 text-muted-foreground" />}
         </div>
         <div className="mt-0.5 space-y-2 text-sm leading-relaxed text-foreground/90">
           {children}
@@ -216,7 +237,7 @@ export function DiscordEmbed({
           )}
         </div>
         {image && <div className="mt-2 overflow-hidden rounded-md">{image}</div>}
-        {footer && <div className="pt-2 text-[11px] text-foreground/45">{footer}</div>}
+        {footer && <div className="pt-2 text-[11px] text-muted-foreground">{footer}</div>}
       </div>
     </div>
   );
@@ -244,7 +265,7 @@ export function DiscordPanel({
           <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/80" />
           <span className="h-2.5 w-2.5 rounded-full bg-green-400/80" />
           {channel && (
-            <span className="ml-3 inline-flex items-center text-xs font-medium text-foreground/55">
+            <span className="ml-3 inline-flex items-center text-xs font-medium text-muted-foreground">
               <Hash className="mr-0.5 h-3.5 w-3.5" />
               {channel}
             </span>
@@ -271,16 +292,16 @@ export function SlashInvocation({
   user?: string;
 }) {
   return (
-    <div className="flex items-center gap-2 text-xs text-foreground/55">
+    <div className="flex items-center gap-2 text-xs text-muted-foreground">
       <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-foreground/15 text-[8px] font-bold text-foreground/70">
         {user.slice(0, 1).toUpperCase()}
       </span>
       <span className="leading-snug">
         <span className="font-medium text-foreground/70">{user}</span> used{" "}
-        <span className="rounded bg-blurple/15 px-1 font-medium text-blurple">{command}</span>
+        <span className="rounded bg-primary/15 px-1 font-medium text-accent-strong">{command}</span>
         {options?.map((o) => (
           <span key={o.name} className="ml-1.5">
-            <span className="text-foreground/45">{o.name}:</span>{" "}
+            <span className="text-muted-foreground">{o.name}:</span>{" "}
             <span className="text-foreground/70">{o.value}</span>
           </span>
         ))}
@@ -293,7 +314,7 @@ export function SlashInvocation({
 export function Ephemeral({ children }: { children: ReactNode }) {
   return (
     <div className="rounded-md bg-foreground/[0.04] px-3 py-2.5 ring-1 ring-border/60">
-      <div className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-foreground/40">
+      <div className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
         <EyeOff className="h-3 w-3" /> Only you can see this
       </div>
       {children}
@@ -362,6 +383,12 @@ export type ModalField = {
   value?: string;
   placeholder?: string;
   paragraph?: boolean;
+  /** Discord's file-upload component — used by the embed image slots. */
+  file?: boolean;
+  /** Discord's string-select component — used by "Suppress link previews?". */
+  select?: boolean;
+  /** The small description line Discord renders under a label. */
+  hint?: string;
 };
 
 export function DiscordModal({
@@ -384,25 +411,48 @@ export function DiscordModal({
       <div className="space-y-3 px-4 py-3">
         {fields.map((f, i) => (
           <div key={i}>
-            <div className="mb-1 text-[10px] font-bold uppercase tracking-wide text-foreground/55">
+            <div className="mb-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
               {f.label}
             </div>
-            <div
-              className={`rounded bg-discord-bg px-2.5 py-1.5 text-[13px] ring-1 ring-border ${
-                f.paragraph ? "min-h-[44px]" : ""
-              }`}
-            >
-              {f.value && filled ? (
-                <span className="whitespace-pre-line text-foreground/80">{f.value}</span>
-              ) : (
-                <span className="text-foreground/35">{f.placeholder}</span>
-              )}
-            </div>
+            {f.hint && <div className="mb-1 text-[11px] text-muted-foreground">{f.hint}</div>}
+            {f.file ? (
+              <div className="flex items-center gap-2 rounded border border-dashed border-border bg-discord-bg px-2.5 py-2 text-[13px]">
+                <Paperclip className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                {f.value && filled ? (
+                  <span className="truncate text-foreground/80">{f.value}</span>
+                ) : (
+                  <span className="text-muted-foreground">Upload a file</span>
+                )}
+              </div>
+            ) : f.select ? (
+              <div className="flex items-center justify-between gap-2 rounded bg-discord-bg px-2.5 py-1.5 text-[13px] ring-1 ring-border">
+                <span
+                  className={f.value && filled ? "text-foreground/80" : "text-muted-foreground"}
+                >
+                  {f.value && filled ? f.value : f.placeholder}
+                </span>
+                <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+              </div>
+            ) : (
+              <div
+                className={`rounded bg-discord-bg px-2.5 py-1.5 text-[13px] ring-1 ring-border ${
+                  f.paragraph ? "min-h-[44px]" : ""
+                }`}
+              >
+                {f.value && filled ? (
+                  <span className="whitespace-pre-line text-foreground/80">{f.value}</span>
+                ) : (
+                  <span className="text-muted-foreground">{f.placeholder}</span>
+                )}
+              </div>
+            )}
           </div>
         ))}
       </div>
       <div className="flex justify-end gap-2 border-t border-border/60 px-4 py-3">
-        <span className="rounded px-3 py-1.5 text-xs font-medium text-foreground/55">Cancel</span>
+        <span className="rounded px-3 py-1.5 text-xs font-medium text-muted-foreground">
+          Cancel
+        </span>
         <span className="rounded bg-[#5865F2] px-3 py-1.5 text-xs font-medium text-white">
           {submitLabel}
         </span>

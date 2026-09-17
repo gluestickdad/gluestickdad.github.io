@@ -1,19 +1,29 @@
 import { Link } from "@tanstack/react-router";
+import { AVATAR_PNG, AVATAR_WEBP } from "./discord";
 
 export function Logo({ className = "" }: { className?: string }) {
   return (
-    <Link to="/" className={`group inline-flex items-center gap-2.5 ${className}`}>
-      <span className="relative grid h-9 w-9 place-items-center overflow-hidden rounded-xl ring-1 ring-border shadow-[0_8px_24px_-10px_#5865F2] transition-transform group-hover:scale-105">
-        <img
-          src={`${import.meta.env.BASE_URL}glue-stick-avatar.jpeg`}
-          alt="Glue Stick"
-          width={36}
-          height={36}
-          className="h-full w-full object-cover"
-        />
+    <Link
+      to="/"
+      className={`group inline-flex items-center gap-2.5 rounded-lg transition-opacity duration-150 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${className}`}
+    >
+      <span className="relative grid h-9 w-9 place-items-center overflow-hidden rounded-lg ring-1 ring-border">
+        {/* Above the fold on every route — no lazy loading here. */}
+        <picture>
+          <source type="image/webp" srcSet={AVATAR_WEBP} />
+          <img
+            src={AVATAR_PNG}
+            // Decorative: the wordmark beside it already says "GlueStick", so a
+            // real alt would make a screen reader announce the name twice.
+            alt=""
+            width={36}
+            height={36}
+            className="h-full w-full object-cover"
+          />
+        </picture>
       </span>
       <span className="font-display text-lg font-bold tracking-tight text-foreground">
-        Glue<span className="text-gradient">Stick</span>
+        Glue<span className="text-accent-strong">Stick</span>
       </span>
     </Link>
   );

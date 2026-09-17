@@ -21,7 +21,7 @@ export function DocsSidebar({ onNavigate }: { onNavigate?: () => void }) {
                   inactiveProps={{
                     className: "text-muted-foreground hover:bg-foreground/5 hover:text-foreground",
                   }}
-                  className="block rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
+                  className="block rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   {page.title}
                 </Link>

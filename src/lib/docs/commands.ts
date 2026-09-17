@@ -10,6 +10,8 @@ export type CommandOption = {
   required: boolean;
   default?: string;
   range?: string;
+  /** Discord offers suggestions as you type, rather than a picker. */
+  autocomplete?: boolean;
   description: string;
 };
 
@@ -33,6 +35,8 @@ export type CommandDoc = {
   summary: string;
   syntax: string;
   options?: CommandOption[];
+  /** Ordered steps, for commands that run as a multi-step button flow. */
+  flow?: string[];
   /** Fields of the pop-up form, for commands that open a modal. */
   modalFields?: ModalField[];
   /** Permissions the bot needs in the channel for this command to work. */
@@ -80,6 +84,7 @@ export const COMMAND_DOCS: CommandDoc[] = [
     notes: [
       "The glued message is posted silently (no notification ping) unless it contains mentions.",
       "Custom server emojis are preserved.",
+      "Replacing a glue keeps the channel's refresh settings — you don't need to re-tune them.",
     ],
     examples: [
       {
@@ -101,7 +106,7 @@ export const COMMAND_DOCS: CommandDoc[] = [
     syntax: "/gluepara",
     modalFields: [
       {
-        name: "Message content",
+        name: "Message Content",
         required: true,
         description: "Multi-line text, up to 2,000 characters. Line breaks are kept as typed.",
       },
@@ -109,7 +114,7 @@ export const COMMAND_DOCS: CommandDoc[] = [
         name: "Suppress link previews?",
         required: false,
         description:
-          "Choose Yes to stop Discord expanding links into embed previews (default: No).",
+          "A dropdown — pick “Yes — hide link previews” to stop Discord expanding links into embed previews (default: No).",
       },
     ],
     botPermissions: ["View Channel", "Send Messages", "Read Message History"],
@@ -117,7 +122,10 @@ export const COMMAND_DOCS: CommandDoc[] = [
       "Maximum 2,000 characters.",
       "One glued message per channel — gluing again replaces the existing one.",
     ],
-    notes: ["Use this instead of /glue whenever your message needs paragraphs or a list."],
+    notes: [
+      "Use this instead of /glue whenever your message needs paragraphs or a list.",
+      "Replacing a glue keeps the channel's refresh settings.",
+    ],
     examples: [
       {
         command: "/gluepara",
@@ -132,35 +140,48 @@ export const COMMAND_DOCS: CommandDoc[] = [
     summary: "Glue a rich embed with its own title, description, accent color, and images.",
     syntax: "/glueembed",
     modalFields: [
-      { name: "Title", required: false, description: "Embed title, up to 256 characters." },
       {
-        name: "Description",
+        name: "Embed Title (max 256 characters)",
         required: false,
-        description: "Embed body text, up to 4,000 characters. Line breaks are kept.",
+        description: "Bold heading shown at the top of the embed.",
       },
       {
-        name: "Color",
+        name: "Embed Description (max 4000 characters)",
         required: false,
-        description: "Hex accent color in #RRGGBB form (default: #66C2FF).",
+        description: "Embed body text. Line breaks are kept as typed.",
       },
       {
-        name: "Thumbnail image",
+        name: "Embed Color (hex code #RRGGBB)",
         required: false,
-        description: "Small image shown in the embed's top-right corner (file upload).",
+        description: "The colored stripe down the left edge (default: #66C2FF).",
       },
       {
-        name: "Large image",
+        name: "Thumbnail Image (optional)",
         required: false,
-        description: "Full-width image shown under the description (file upload).",
+        description:
+          "Small image in the embed's top-right corner. Upload the file directly in the form — PNG, JPEG, GIF or WebP.",
+      },
+      {
+        name: "Main Image (optional)",
+        required: false,
+        description:
+          "Full-width image under the description. Upload the file directly in the form — PNG, JPEG, GIF or WebP.",
       },
     ],
     botPermissions: ["View Channel", "Send Messages", "Read Message History", "Embed Links"],
     limits: [
       "At least one of title, description, thumbnail, or image is required.",
+      "Title 256 characters, description 4,000 — and 6,000 combined across the whole embed, which is Discord's own limit.",
+      "Two images maximum: one thumbnail and one main image.",
+      "Images up to 10 MB. Anything larger is scaled down to fit rather than rejected — never cropped.",
       "One glued message per channel — gluing again replaces the existing one.",
     ],
     notes: [
-      "Uploaded images are re-hosted permanently, so the embed keeps working even after the original upload expires.",
+      "Images are uploaded inside the form, not pasted as links, and are re-hosted permanently — the embed keeps working long after a normal Discord upload link would expire.",
+      "If an image is resized, the bot tells you the before and after size.",
+      "If an image fails to upload, the whole command is cancelled and nothing is glued — so you never end up with a half-finished embed.",
+      "Embeds support a title, description, color, thumbnail and main image. Footers, authors and custom fields aren't available.",
+      "Replacing a glue keeps the channel's refresh settings.",
     ],
     examples: [
       {
@@ -177,11 +198,23 @@ export const COMMAND_DOCS: CommandDoc[] = [
     group: "managing",
     summary: "Edit the glued message in the current channel without re-gluing it.",
     syntax: "/editglue",
-    botPermissions: ["View Channel", "Send Messages", "Read Message History"],
+    flow: [
+      "Run /editglue in the channel holding the glue. The bot replies privately with a row of buttons.",
+      "Press “Edit Glued Message” to open a form pre-filled with the current content — a text form for text glues, the embed builder for embed glues.",
+      "Embed glues with images get extra red buttons: “Remove Thumbnail”, “Remove Image”, and “Remove Both Images” when both slots are filled.",
+      "Removing asks you to confirm first. Confirming reposts the glue without that image; “Cancel” leaves everything untouched.",
+      "Each run makes one change. After a removal, run /editglue again for another round.",
+    ],
+    botPermissions: ["View Channel", "Send Messages", "Read Message History", "Embed Links"],
+    limits: [
+      "Same caps as the original glue: 2,000 characters for text, and 256 / 4,000 / 6,000 combined for embeds.",
+    ],
     notes: [
-      "Opens a pop-up form pre-filled with the current content — text form for text glues, the full embed builder for embed glues.",
-      "For embed glues, leave the image fields blank to keep the existing images.",
+      "Leaving an image field blank keeps the existing image. That's why removing one is a button rather than a form field — a blank field can't mean both “keep” and “delete”.",
       "The channel's refresh settings are preserved.",
+      "If someone re-glues the channel while you have the editor open, your edit is refused rather than applied to the wrong message — just run /editglue again.",
+      "An image that fails to upload won't block the edit: your text changes still land and the previous image is kept.",
+      "Removing an image that would leave the embed completely empty is refused — add a title or description first, or use /unglue.",
     ],
     examples: [
       {
@@ -200,11 +233,12 @@ export const COMMAND_DOCS: CommandDoc[] = [
     options: [
       {
         name: "channel",
-        type: "Channel",
+        type: "String",
         required: false,
         default: "current channel",
+        autocomplete: true,
         description:
-          "Which channel to unglue. Autocomplete only lists channels that currently have a glued message (threads are marked with 🧵).",
+          "Which channel to unglue. Start typing and Discord suggests only channels that currently have a glued message (threads are marked with 🧵).",
       },
     ],
     botPermissions: ["View Channel", "Send Messages", "Read Message History"],
@@ -233,8 +267,11 @@ export const COMMAND_DOCS: CommandDoc[] = [
       },
     ],
     notes: [
-      "Results are paginated five per page with Previous/Next buttons (active for five minutes).",
+      "The list is posted publicly in the channel. Adding show_glued_by:true replies privately to you instead.",
+      "Results are paginated five per page with Previous/Next buttons (active for five minutes), and only the person who ran the command can page through them.",
+      "Long messages are previewed up to 750 characters.",
       "Channels the bot can no longer view are footnoted rather than listed.",
+      "A glue the bot can no longer post in is flagged with a warning and the date it will be removed — a glue that stays broken for 7 days is retired automatically, so this is the place to catch one before it's gone.",
       "Server-only — cannot be used in DMs.",
     ],
     examples: [
@@ -264,21 +301,23 @@ export const COMMAND_DOCS: CommandDoc[] = [
     group: "managing",
     summary: "View or tune how quickly a channel's glued message refreshes.",
     syntax:
-      "/refreshconfig [channel:<glued channel>] [messagecount:<5–50>] [refreshtime:<15–3600>]",
+      "/refreshconfig [channel:<glued channel>] [messagecount:<5–500>] [refreshtime:<15–86400>]",
     options: [
       {
         name: "channel",
-        type: "Channel",
+        type: "String",
         required: false,
         default: "current channel",
-        description: "Which glued channel to configure (autocomplete lists glued channels only).",
+        autocomplete: true,
+        description:
+          "Which glued channel to configure. Start typing and Discord suggests glued channels only.",
       },
       {
         name: "messagecount",
         type: "Integer",
         required: false,
         default: "5",
-        range: "5–50",
+        range: "5–500",
         description: "Number of new messages that immediately triggers a refresh.",
       },
       {
@@ -286,14 +325,16 @@ export const COMMAND_DOCS: CommandDoc[] = [
         type: "Integer",
         required: false,
         default: "15",
-        range: "15–3600 seconds",
-        description: "Seconds after the first new message before the glue refreshes.",
+        range: "15–86400 seconds",
+        description:
+          "Seconds after the first new message before the glue refreshes. The maximum is 24 hours.",
       },
     ],
     notes: [
       "Run it with no options to see the channel's current settings.",
-      "Settings are per channel, not server-wide.",
-      "After changing settings, the very next message triggers an immediate refresh so you can see the effect.",
+      "Settings are per channel, not server-wide, and they survive re-gluing.",
+      "Changing the time applies to the cycle already in progress — shortening it can make a waiting glue refresh right away.",
+      "If the channel has already passed the new message count and the glue is buried, it refreshes immediately. A quiet channel is left alone.",
       "See the Configuration page for exactly how the two triggers interact.",
     ],
     examples: [
@@ -331,6 +372,7 @@ export const COMMAND_DOCS: CommandDoc[] = [
     group: "utility",
     summary: "Show the in-Discord command overview with invite, support, and vote buttons.",
     syntax: "/help",
+    notes: ["Posted publicly in the channel, silently — nobody gets a notification ping."],
   },
   {
     slug: "invite",
@@ -359,5 +401,8 @@ export const COMMAND_DOCS: CommandDoc[] = [
     group: "utility",
     summary: "Check the bot's response time and API latency.",
     syntax: "/ping",
+    notes: [
+      "When the bot is sharded, it also reports which shard your server is on plus fleet-wide totals.",
+    ],
   },
 ];

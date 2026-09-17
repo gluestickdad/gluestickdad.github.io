@@ -3,21 +3,22 @@ import { Info, Lightbulb, TriangleAlert } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 
+/** Semantic tokens only — see --success / --warning in styles.css. */
 const VARIANTS = {
   info: {
     icon: Info,
     defaultTitle: "Note",
-    classes: "border-sky/30 bg-sky/10 [&>svg]:text-sky",
+    classes: "border-primary/30 bg-primary/10 [&>svg]:text-accent-strong",
   },
   tip: {
     icon: Lightbulb,
     defaultTitle: "Tip",
-    classes: "border-emerald-500/40 bg-emerald-500/10 [&>svg]:text-emerald-500",
+    classes: "border-success/40 bg-success/10 [&>svg]:text-success",
   },
   warning: {
     icon: TriangleAlert,
     defaultTitle: "Warning",
-    classes: "border-amber-500/40 bg-amber-500/10 [&>svg]:text-amber-500",
+    classes: "border-warning/40 bg-warning/10 [&>svg]:text-warning",
   },
 } as const;
 

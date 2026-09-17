@@ -2,11 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { DocsHeading } from "@/components/docs/DocsHeading";
 import { DocsPage } from "@/components/docs/DocsPage";
 import { FAQ_ITEMS } from "@/lib/docs/faq";
-import { seo, jsonLd, SITE_URL } from "@/lib/seo";
+import { docsSeo, jsonLd, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/docs/faq")({
   head: () => {
-    const s = seo({
+    const s = docsSeo({
+      breadcrumb: "FAQ",
       title: "FAQ — Glue Stick Docs",
       description:
         "Answers to common Glue Stick questions: refreshing problems, permissions, message limits, notification pings, and more.",
@@ -19,7 +20,8 @@ export const Route = createFileRoute("/docs/faq")({
         jsonLd({
           "@context": "https://schema.org",
           "@type": "FAQPage",
-          url: `${SITE_URL}/docs/faq`,
+          // Trailing slash to match the canonical and sitemap.
+          url: `${SITE_URL}/docs/faq/`,
           mainEntity: FAQ_ITEMS.map((f) => ({
             "@type": "Question",
             name: f.question,

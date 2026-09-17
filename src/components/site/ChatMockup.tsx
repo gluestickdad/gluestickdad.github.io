@@ -2,12 +2,27 @@ import { motion } from "framer-motion";
 import { DiscordPanel, DiscordMessage, BotMessage, renderContent } from "./discord";
 
 const chatter = [
-  { name: "Alex", color: "#3aa0ff", time: "7:42 PM", text: "anyone up for a game tonight?" },
-  { name: "Mira", color: "#d061ff", time: "7:43 PM", text: "yesss, drop a link when ready" },
-  { name: "Jordan", color: "#e08a2b", time: "7:44 PM", text: "wait, what channel are we using?" },
+  {
+    name: "Alex",
+    color: "var(--discord-name-blue)",
+    time: "7:42 PM",
+    text: "anyone up for a game tonight?",
+  },
+  {
+    name: "Mira",
+    color: "var(--discord-name-purple)",
+    time: "7:43 PM",
+    text: "yesss, drop a link when ready",
+  },
+  {
+    name: "Jordan",
+    color: "var(--discord-name-orange)",
+    time: "7:44 PM",
+    text: "wait, what channel are we using?",
+  },
   {
     name: "Sam",
-    color: "#1fb877",
+    color: "var(--discord-name-green)",
     time: "7:45 PM",
     text: "scroll down — the info is always glued 👇",
   },
@@ -24,33 +39,42 @@ export function ChatMockup() {
       transition={{ duration: 0.8, ease: "easeOut" }}
       className="glass relative w-full max-w-md rounded-2xl p-1"
     >
-      <DiscordPanel channel="general">
-        <div className="space-y-3.5">
-          {chatter.map((m, i) => (
-            <motion.div
-              key={m.name}
-              initial={{ opacity: 0, x: -8 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 + i * 0.12 }}
-            >
-              <DiscordMessage name={m.name} color={m.color} time={m.time}>
-                {m.text}
-              </DiscordMessage>
-            </motion.div>
-          ))}
+      {/* This is a picture of Discord, not real content: the fake names and
+          chatter read as live messages to a screen reader. Hide the illustration
+          and give it a single equivalent description instead. */}
+      <span className="sr-only">
+        Illustration: a Discord channel where members are chatting, with a Glue Stick message
+        staying pinned at the bottom of the conversation.
+      </span>
+      <div aria-hidden="true">
+        <DiscordPanel channel="general">
+          <div className="space-y-3.5">
+            {chatter.map((m, i) => (
+              <motion.div
+                key={m.name}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 + i * 0.12 }}
+              >
+                <DiscordMessage name={m.name} color={m.color} time={m.time}>
+                  {m.text}
+                </DiscordMessage>
+              </motion.div>
+            ))}
 
-          {/* Glued bot message */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9, duration: 0.6 }}
-          >
-            <BotMessage time="Today at 7:45 PM" muted>
-              <p>{renderContent(gluedText)}</p>
-            </BotMessage>
-          </motion.div>
-        </div>
-      </DiscordPanel>
+            {/* Glued bot message */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9, duration: 0.6 }}
+            >
+              <BotMessage time="Today at 7:45 PM" muted>
+                <p>{renderContent(gluedText)}</p>
+              </BotMessage>
+            </motion.div>
+          </div>
+        </DiscordPanel>
+      </div>
     </motion.div>
   );
 }

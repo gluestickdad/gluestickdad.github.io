@@ -63,12 +63,34 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-blurple: var(--blurple);
   --color-sky: var(--sky-accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
   --color-code-bg: var(--code-bg);
   --color-code-fg: var(--code-fg);
   --color-discord-bg: var(--discord-bg);
   --color-discord-elevated: var(--discord-elevated);
   --font-display: "Poppins", system-ui, sans-serif;
   --font-sans: "Inter", system-ui, sans-serif;
+
+  /*
+   * Type ramp. Headings use --font-display (Poppins), body --font-sans (Inter).
+   * Apply these and nothing else — no arbitrary text-[13px] values in site code.
+   *
+   *   h1     text-4xl sm:text-5xl lg:text-6xl   leading-[1.05] tracking-tight
+   *   h2     text-3xl sm:text-4xl
+   *   h3     text-lg font-semibold
+   *   lede   text-lg leading-relaxed text-muted-foreground
+   *   body   text-body   (15px — long-form prose)
+   *   UI     text-sm / text-xs
+   *
+   * src/components/site/discord/** is exempt: it replicates Discord's own
+   * type scale and needs its 10-13px sizes for fidelity.
+   */
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.7;
 }
 
 :root {
@@ -95,6 +117,21 @@
   --ring: oklch(0.55 0.22 270);
   --blurple: oklch(0.55 0.22 270);
   --sky-accent: oklch(0.62 0.16 240);
+  /*
+   * --primary is a SURFACE (button fill, under --primary-foreground text), so
+   * it stays at brand blurple in both themes — as Discord's own blurple does.
+   * --accent-strong is blurple as TEXT on --background, which must get lighter
+   * in dark mode to stay readable. Using --primary for both is what pushed the
+   * dark-mode CTA label to 3.3:1; keeping them separate holds every pairing
+   * above 4.5:1. Pick by role: fill -> primary, text-on-background -> accent-strong.
+   */
+  --accent-strong: oklch(0.55 0.22 270);
+  /* Dark enough to clear 4.5:1 on --background when used as text, not just as
+     an icon tint (3:1). The required-field marker in the docs is small text. */
+  --success: oklch(0.5 0.14 155);
+  --success-foreground: oklch(0.99 0 0);
+  --warning: oklch(0.52 0.13 70);
+  --warning-foreground: oklch(0.99 0 0);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -117,6 +154,22 @@
   /* Discord mockup surfaces (light Discord) */
   --discord-bg: oklch(1 0 0);
   --discord-elevated: oklch(0.97 0.006 265);
+
+  /* Discord member-name palette.
+     PARTIAL EXEMPTION to the "Discord hexes verbatim" rule in
+     src/components/site/discord/index.tsx: the light Discord surface is pure
+     white, where Discord's own name colours land at 1.7-3.0:1 and fail WCAG AA.
+     These are darkened equivalents (all >= 5.8:1 on white). The .dark block
+     below restores Discord's exact hexes, so dark mode is pixel-identical.
+     Referenced as var(--discord-name-*) because the names are applied via
+     inline style and inline styles cannot respond to a theme selector. */
+  --discord-name-blue: #1567b3;
+  --discord-name-green: #0f7047;
+  --discord-name-purple: #8b2fc9;
+  --discord-name-orange: #8a5214;
+  --discord-name-pink: #c02339;
+  --discord-name-teal: #0d6f68;
+  --discord-name-magenta: #9b30b5;
 }
 
 .dark {
@@ -127,7 +180,8 @@
   --card-foreground: oklch(0.97 0.005 250);
   --popover: oklch(0.19 0.028 265);
   --popover-foreground: oklch(0.97 0.005 250);
-  --primary: oklch(0.62 0.21 270);
+  /* Holds at brand blurple rather than lightening — see the note in :root. */
+  --primary: oklch(0.55 0.22 270);
   --primary-foreground: oklch(0.99 0 0);
   --secondary: oklch(0.26 0.03 265);
   --secondary-foreground: oklch(0.97 0.005 250);
@@ -142,6 +196,12 @@
   --ring: oklch(0.62 0.21 270);
   --blurple: oklch(0.62 0.21 270);
   --sky-accent: oklch(0.78 0.13 235);
+  /* Lightened blurple for text on the navy background (~8.8:1). */
+  --accent-strong: oklch(0.78 0.14 268);
+  --success: oklch(0.72 0.16 155);
+  --success-foreground: oklch(0.16 0.025 265);
+  --warning: oklch(0.78 0.15 80);
+  --warning-foreground: oklch(0.16 0.025 265);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
@@ -164,6 +224,18 @@
   /* Discord mockup surfaces (dark Discord) */
   --discord-bg: oklch(0.21 0.012 265);
   --discord-elevated: oklch(0.25 0.013 265);
+
+  /* Discord's exact member-name hexes. These pass AA on the dark surface, so
+     fidelity is kept here — only the light values above are adjusted.
+     (--discord-name-purple is the one borderline case at ~4.4:1; kept verbatim
+     deliberately rather than nudged, to preserve the Discord look.) */
+  --discord-name-blue: #3aa0ff;
+  --discord-name-green: #1fb877;
+  --discord-name-purple: #d061ff;
+  --discord-name-orange: #e08a2b;
+  --discord-name-pink: #ff6b81;
+  --discord-name-teal: #52d0c8;
+  --discord-name-magenta: #f0a6ff;
 }
 
 @layer base {
@@ -200,13 +272,6 @@
   background-size: 48px 48px;
 }
 
-@utility text-gradient {
-  background: linear-gradient(135deg, #66c2ff 0%, #8b95ff 50%, #5865f2 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
 @utility glass {
   background: color-mix(in oklab, var(--card) 70%, transparent);
   backdrop-filter: blur(16px) saturate(140%);
@@ -214,9 +279,67 @@
   box-shadow: var(--glass-shadow);
 }
 
-@utility btn-glow {
-  box-shadow:
-    0 0 0 1px oklch(1 0 0 / 0.08) inset,
-    0 10px 30px -10px #5865f2,
-    0 0 40px -10px #66c2ff;
+/*
+ * Long-form body copy, shared by the legal pages (LegalLayout) and the docs
+ * articles (DocsPage) — previously two near-identical arbitrary-variant chains
+ * that had already drifted apart.
+ *
+ * Every rule is wrapped in :where() so it contributes zero specificity and any
+ * utility class at the call site still wins. Inline code is scoped with
+ * :not(pre) so CodeBlock's <pre><code> is left alone. Link colour stays at the
+ * call site, as it always has.
+ */
+@utility prose-site {
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  color: color-mix(in oklab, var(--foreground) 85%, transparent);
+
+  & :where(p, ul, ol) {
+    margin-top: --spacing(3);
+  }
+
+  & :where(ul) {
+    list-style-type: disc;
+    padding-left: --spacing(6);
+  }
+
+  & :where(ol) {
+    list-style-type: decimal;
+    padding-left: --spacing(6);
+  }
+
+  & :where(li + li) {
+    margin-top: --spacing(1.5);
+  }
+
+  & :where(h2) {
+    margin-top: --spacing(2);
+    font-size: var(--text-xl);
+    line-height: var(--text-xl--line-height);
+    font-weight: 600;
+    color: var(--foreground);
+  }
+
+  & :where(h3) {
+    margin-top: --spacing(6);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    font-weight: 600;
+    color: var(--foreground);
+  }
+
+  & :where(strong) {
+    color: var(--foreground);
+    font-weight: 600;
+  }
+
+  & :where(:not(pre) > code) {
+    border-radius: var(--radius-sm);
+    background: var(--code-bg);
+    color: var(--code-fg);
+    padding-inline: --spacing(1.5);
+    padding-block: --spacing(0.5);
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+  }
 }

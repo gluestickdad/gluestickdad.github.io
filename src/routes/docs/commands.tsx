@@ -10,11 +10,12 @@ import {
   type CommandDoc,
   type CommandOption,
 } from "@/lib/docs/commands";
-import { seo } from "@/lib/seo";
+import { docsSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/docs/commands")({
   head: () =>
-    seo({
+    docsSeo({
+      breadcrumb: "Commands",
       title: "Command Reference — Glue Stick Docs",
       description:
         "Every Glue Stick slash command — /glue, /gluepara, /glueembed, /editglue, /unglue, /refreshconfig and more — with syntax, options, limits, and examples.",
@@ -41,7 +42,15 @@ const GROUP_INTROS: Record<string, string> = {
 function OptionsTable({ options }: { options: CommandOption[] }) {
   return (
     <>
-      <div className="mt-4 overflow-x-auto rounded-lg border border-border">
+      {/* tabIndex + role: a horizontally scrollable box must be reachable by
+          keyboard, or narrow-viewport users can't scroll to the Description
+          column at all (WCAG 2.1.1). */}
+      <div
+        className="mt-4 overflow-x-auto rounded-lg border border-border"
+        tabIndex={0}
+        role="region"
+        aria-label="Command options"
+      >
         <table className="w-full min-w-[560px] border-collapse text-sm">
           <thead>
             <tr className="border-b border-border bg-foreground/5 text-left">
@@ -65,13 +74,16 @@ function OptionsTable({ options }: { options: CommandOption[] }) {
                 <td className="whitespace-nowrap px-3 py-2 font-mono text-[13px] text-foreground">
                   {o.name}
                   {o.required && (
-                    <span className="text-amber-500" aria-label="required">
+                    <span className="text-warning" aria-label="required">
                       {" "}
                       *
                     </span>
                   )}
                 </td>
-                <td className="px-3 py-2 text-muted-foreground">{o.type}</td>
+                <td className="px-3 py-2 text-muted-foreground">
+                  {o.type}
+                  {o.autocomplete && <span className="block text-xs">autocomplete</span>}
+                </td>
                 <td className="whitespace-nowrap px-3 py-2 text-muted-foreground">
                   {o.default ?? "—"}
                   {o.range && <span className="block text-xs">({o.range})</span>}
@@ -99,6 +111,17 @@ function CommandSection({ cmd }: { cmd: CommandDoc }) {
       <CodeBlock className="mt-4">{cmd.syntax}</CodeBlock>
 
       {cmd.options && <OptionsTable options={cmd.options} />}
+
+      {cmd.flow && (
+        <>
+          <p className="mt-5 text-sm font-semibold text-foreground">How it works</p>
+          <ol>
+            {cmd.flow.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ol>
+        </>
+      )}
 
       {cmd.modalFields && (
         <>
@@ -182,7 +205,7 @@ function CommandsReferencePage() {
         <Link
           to="/docs/permissions"
           hash="restricting-commands"
-          className="text-sky underline-offset-4 hover:underline"
+          className="text-accent-strong underline-offset-4 hover:underline"
         >
           Restricting who can use commands
         </Link>

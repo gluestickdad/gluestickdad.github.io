@@ -31,7 +31,12 @@ export function DocsSearch({
   };
 
   return (
-    <CommandDialog open={open} onOpenChange={onOpenChange}>
+    <CommandDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      title="Search documentation"
+      description="Search Glue Stick docs pages, the command reference, and FAQ entries."
+    >
       <CommandInput placeholder="Search docs…" />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>

@@ -9,7 +9,7 @@ export type FaqItem = {
   plain: string;
 };
 
-const docsLink = "text-sky underline-offset-4 hover:underline";
+const docsLink = "text-accent-strong underline-offset-4 hover:underline";
 
 export const FAQ_ITEMS: FaqItem[] = [
   {
@@ -20,12 +20,21 @@ export const FAQ_ITEMS: FaqItem[] = [
         <p>
           Almost always a permissions change. If Glue Stick loses <strong>View Channel</strong>,{" "}
           <strong>Send Messages</strong>, or <strong>Read Message History</strong> in a channel, it
-          can no longer maintain the glue there — and after a failed refresh the glue is removed
-          entirely so the bot doesn't keep retrying a channel it can't post in.
+          can no longer maintain the glue there.
         </p>
         <p>
-          Run <code>/permcheck</code> in the channel, restore anything shown in red, then glue the
-          message again. See{" "}
+          It doesn't give up immediately. A one-off network or Discord error never deletes anything.
+          A glue the bot genuinely <em>can't</em> post in — a locked thread, a revoked permission —
+          is flagged and kept for <strong>7 days</strong>, and only retired if it's still broken at
+          the end of that window. Run{" "}
+          <Link to="/docs/commands" hash="listglues" className={docsLink}>
+            <code>/listglues</code>
+          </Link>{" "}
+          to see which glues are flagged and when they're due to be removed.
+        </p>
+        <p>
+          Run <code>/permcheck</code> in the channel and restore anything shown in red. If you fix
+          it inside the 7 days, the glue simply resumes — no need to re-glue. See{" "}
           <Link to="/docs/permissions" className={docsLink}>
             Permissions
           </Link>{" "}
@@ -34,7 +43,7 @@ export const FAQ_ITEMS: FaqItem[] = [
       </>
     ),
     plain:
-      "Almost always a permissions change. If Glue Stick loses View Channel, Send Messages, or Read Message History it removes the glue after a failed refresh. Run /permcheck, restore permissions, then glue again.",
+      "Almost always a permissions change. If Glue Stick loses View Channel, Send Messages, or Read Message History it can't maintain the glue. Transient errors never delete anything; a genuinely broken glue is flagged and kept for 7 days, then retired only if still broken. Run /listglues to see flagged glues and /permcheck to fix the channel — restore it in time and the glue resumes on its own.",
   },
   {
     slug: "who-can-use-commands",
@@ -67,7 +76,8 @@ export const FAQ_ITEMS: FaqItem[] = [
         With default settings: as soon as <strong>5 new messages</strong> arrive, or{" "}
         <strong>15 seconds</strong> after the first new message — whichever happens first. If
         nothing is posted, the glue stays put and is never refreshed redundantly. Both values are
-        tunable per channel with <code>/refreshconfig</code> — see{" "}
+        tunable per channel with <code>/refreshconfig</code> — anywhere from 5 to 500 messages, and
+        from 15 seconds to 24 hours. See{" "}
         <Link to="/docs/configuration" className={docsLink}>
           Configuration
         </Link>
@@ -75,7 +85,7 @@ export const FAQ_ITEMS: FaqItem[] = [
       </p>
     ),
     plain:
-      "With defaults: after 5 new messages, or 15 seconds after the first new message, whichever comes first. Tunable per channel with /refreshconfig.",
+      "With defaults: after 5 new messages, or 15 seconds after the first new message, whichever comes first. Tunable per channel with /refreshconfig, from 5–500 messages and 15 seconds–24 hours.",
   },
   {
     slug: "multiple-glues",
@@ -123,11 +133,48 @@ export const FAQ_ITEMS: FaqItem[] = [
       <p>
         Text glues (<code>/glue</code> and <code>/gluepara</code>) can be up to{" "}
         <strong>2,000 characters</strong>. Embed glues allow a 256-character title plus a
-        4,000-character description.
+        4,000-character description — but Discord also caps the{" "}
+        <strong>combined embed at 6,000 characters</strong>, so you can't use both maximums at once.
       </p>
     ),
     plain:
-      "Text glues: 2,000 characters. Embed glues: 256-character title plus 4,000-character description.",
+      "Text glues: 2,000 characters. Embed glues: 256-character title plus 4,000-character description, with a combined 6,000-character cap across the whole embed.",
+  },
+  {
+    slug: "remove-embed-image",
+    question: "How do I remove an image from an embed without re-gluing it?",
+    answer: (
+      <>
+        <p>
+          Run <code>/editglue</code> in the channel. Alongside the editor button you'll get red{" "}
+          <strong>Remove Thumbnail</strong> / <strong>Remove Image</strong> buttons — and{" "}
+          <strong>Remove Both Images</strong> when the embed has both. Each one asks you to confirm
+          before anything changes.
+        </p>
+        <p>
+          It's a button rather than a field in the form because leaving an image field blank means{" "}
+          <em>keep the existing image</em> — a blank box can't mean both "keep" and "delete". One
+          change per run, so run <code>/editglue</code> again for another.
+        </p>
+      </>
+    ),
+    plain:
+      "Run /editglue and use the red Remove Thumbnail, Remove Image, or Remove Both Images buttons, each of which asks you to confirm. It's a button rather than a form field because a blank image field means keep the existing image. One change per run.",
+  },
+  {
+    slug: "image-resized",
+    question: "Why was my embed image resized?",
+    answer: (
+      <p>
+        Images are hosted permanently rather than relying on a link that expires, and that storage
+        has a <strong>10 MB</strong> ceiling. Rather than rejecting a larger upload, Glue Stick
+        scales it down to fit and tells you the before and after size. It only ever scales — the
+        image is never cropped and nothing is cut off. PNG, JPEG, GIF and WebP are supported, and
+        animated images stay animated.
+      </p>
+    ),
+    plain:
+      "Images are re-hosted permanently and that storage caps at 10 MB. Larger uploads are scaled down to fit rather than rejected, and the bot reports the before and after size. Images are never cropped. PNG, JPEG, GIF and WebP are supported and animation is preserved.",
   },
   {
     slug: "reads-messages",

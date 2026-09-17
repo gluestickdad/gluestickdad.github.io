@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as CommandsRouteImport } from './routes/commands'
+import { Route as R404RouteImport } from './routes/404'
 import { Route as DocsRouteRouteImport } from './routes/docs/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DocsIndexRouteImport } from './routes/docs/index'
@@ -35,6 +36,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const CommandsRoute = CommandsRouteImport.update({
   id: '/commands',
   path: '/commands',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const R404Route = R404RouteImport.update({
+  id: '/404',
+  path: '/404',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DocsRouteRoute = DocsRouteRouteImport.update({
@@ -86,6 +92,7 @@ const DocsCommandsRoute = DocsCommandsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/docs': typeof DocsRouteRouteWithChildren
+  '/404': typeof R404Route
   '/commands': typeof CommandsRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/404': typeof R404Route
   '/commands': typeof CommandsRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
@@ -114,6 +122,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/docs': typeof DocsRouteRouteWithChildren
+  '/404': typeof R404Route
   '/commands': typeof CommandsRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
@@ -130,6 +139,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/docs'
+    | '/404'
     | '/commands'
     | '/privacy'
     | '/terms'
@@ -143,6 +153,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/404'
     | '/commands'
     | '/privacy'
     | '/terms'
@@ -157,6 +168,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/docs'
+    | '/404'
     | '/commands'
     | '/privacy'
     | '/terms'
@@ -172,6 +184,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DocsRouteRoute: typeof DocsRouteRouteWithChildren
+  R404Route: typeof R404Route
   CommandsRoute: typeof CommandsRoute
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
@@ -198,6 +211,13 @@ declare module '@tanstack/react-router' {
       path: '/commands'
       fullPath: '/commands'
       preLoaderRoute: typeof CommandsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/404': {
+      id: '/404'
+      path: '/404'
+      fullPath: '/404'
+      preLoaderRoute: typeof R404RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/docs': {
@@ -293,6 +313,7 @@ const DocsRouteRouteWithChildren = DocsRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DocsRouteRoute: DocsRouteRouteWithChildren,
+  R404Route: R404Route,
   CommandsRoute: CommandsRoute,
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,

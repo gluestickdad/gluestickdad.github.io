@@ -10,17 +10,53 @@ import {
   type ModalField,
 } from "./discord";
 import { COMMANDS, type CommandDef } from "./discord/commands";
+import { Skeleton } from "@/components/ui/skeleton";
+
+/*
+ * DESIGN-SYSTEM EXEMPTION, same as src/components/site/discord/.
+ *
+ * Everything inside the panel below — the server rail, command sidebar, channel
+ * header and message bar — reproduces Discord's own window chrome, so it keeps
+ * Discord's radii (rounded / rounded-[16px]) and type scale rather than the
+ * site ramp. Only the OUTER shell (the glass rounded-2xl wrapper) follows the
+ * system. Don't fold the inner chrome into the site's radius ramp.
+ */
 
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
+/**
+ * Holds the message shapes while a newly-picked command's script starts up.
+ * Switching commands clears the chat and waits ~250ms before the first beat;
+ * without this the panel flashes empty, which reads as a broken click.
+ */
+function ChatSkeleton() {
+  return (
+    <div className="space-y-4" aria-hidden>
+      {[0, 1, 2].map((i) => (
+        <div key={i} className="flex gap-3">
+          <Skeleton className="h-9 w-9 shrink-0 rounded-full" />
+          <div className="min-w-0 flex-1 space-y-2 py-0.5">
+            <Skeleton className="h-3 w-28" />
+            <Skeleton className={i === 1 ? "h-3 w-3/5" : "h-3 w-4/5"} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const FLOOD = [
-  { name: "Riley", color: "#3aa0ff", text: "just joined — this place is active!" },
-  { name: "Kai", color: "#1fb877", text: "gg everyone, that was close" },
-  { name: "Noor", color: "#d061ff", text: "where do I get the event role again?" },
-  { name: "Theo", color: "#e08a2b", text: "lol nice clip 😂" },
-  { name: "Vera", color: "#ff6b81", text: "anyone got the patch notes?" },
-  { name: "Dex", color: "#52d0c8", text: "brb grabbing food" },
-  { name: "Mara", color: "#f0a6ff", text: "who's on for the event tonight?" },
+  { name: "Riley", color: "var(--discord-name-blue)", text: "just joined — this place is active!" },
+  { name: "Kai", color: "var(--discord-name-green)", text: "gg everyone, that was close" },
+  {
+    name: "Noor",
+    color: "var(--discord-name-purple)",
+    text: "where do I get the event role again?",
+  },
+  { name: "Theo", color: "var(--discord-name-orange)", text: "lol nice clip 😂" },
+  { name: "Vera", color: "var(--discord-name-pink)", text: "anyone got the patch notes?" },
+  { name: "Dex", color: "var(--discord-name-teal)", text: "brb grabbing food" },
+  { name: "Mara", color: "var(--discord-name-magenta)", text: "who's on for the event tonight?" },
 ];
 
 type ChatItem = { id: number; node: ReactNode; ephemeral?: boolean; glue?: boolean };
@@ -85,7 +121,7 @@ function Sidebar({
   const Group = ({ label, items }: { label: string; items: CommandDef[] }) =>
     items.length === 0 ? null : (
       <div>
-        <p className="px-2 pb-1 text-[10px] font-bold uppercase tracking-wide text-foreground/45">
+        <p className="px-2 pb-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
           {label}
         </p>
         <div className="space-y-0.5">
@@ -94,13 +130,15 @@ function Sidebar({
               key={c.name}
               type="button"
               onClick={() => onPick(c.name)}
+              // Without aria-current the selection is conveyed by background colour alone.
+              aria-current={c.name === selected ? "true" : undefined}
               className={`flex w-full items-center gap-1.5 rounded px-2 py-1.5 text-left text-sm transition-colors ${
                 c.name === selected
                   ? "bg-foreground/10 font-medium text-foreground"
                   : "text-foreground/65 hover:bg-foreground/5 hover:text-foreground"
               }`}
             >
-              <span className="font-mono text-foreground/35">/</span>
+              <span className="font-mono text-muted-foreground">/</span>
               <span className="truncate">{c.name.slice(1)}</span>
             </button>
           ))}
@@ -115,14 +153,15 @@ function Sidebar({
         Glue Stick
       </div>
       <div className="px-2.5 py-2.5">
-        <div className="flex items-center gap-1.5 rounded bg-discord-bg px-2 py-1.5 ring-1 ring-border">
-          <Search className="h-3.5 w-3.5 text-foreground/40" />
+        {/* The input is borderless, so the focus ring goes on the wrapper. */}
+        <div className="flex items-center gap-1.5 rounded bg-discord-bg px-2 py-1.5 ring-1 ring-border focus-within:ring-2 focus-within:ring-ring">
+          <Search className="h-3.5 w-3.5 text-muted-foreground" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search commands"
             aria-label="Search commands"
-            className="w-full bg-transparent text-xs text-foreground outline-none placeholder:text-foreground/40"
+            className="w-full bg-transparent text-xs text-foreground outline-none placeholder:text-muted-foreground"
           />
         </div>
       </div>
@@ -130,7 +169,10 @@ function Sidebar({
         <Group label="Core — Glue Management" items={core} />
         <Group label="Utility & Info" items={utility} />
         {core.length === 0 && utility.length === 0 && (
-          <p className="px-2 pt-2 text-xs text-foreground/45">No commands match “{query}”.</p>
+          /* aria-live: filtering to zero results is otherwise silent. */
+          <p className="px-2 pt-2 text-xs text-muted-foreground" role="status">
+            No commands match “{query}”.
+          </p>
         )}
       </div>
     </div>
@@ -156,6 +198,25 @@ export function CommandExplorer() {
   const runRef = useRef(0);
   const glueRef = useRef<ReactNode>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const drawerTriggerRef = useRef<HTMLButtonElement>(null);
+
+  // The drawer is hand-rolled rather than a Radix Sheet, so Escape-to-close,
+  // initial focus and focus restoration have to be wired up explicitly.
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setDrawerOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    // Move focus into the drawer so the next Tab stays in context.
+    drawerRef.current?.querySelector<HTMLElement>("input, button")?.focus();
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      drawerTriggerRef.current?.focus();
+    };
+  }, [drawerOpen]);
 
   // Keep the channel scrolled to the bottom as the script plays.
   useEffect(() => {
@@ -304,7 +365,7 @@ export function CommandExplorer() {
       <div className="flex h-[600px] lg:h-[660px]">
         {/* Server rail (desktop) */}
         <div className="hidden w-14 shrink-0 flex-col items-center gap-3 bg-discord-elevated py-3 lg:flex">
-          <div className="overflow-hidden rounded-[16px] ring-2 ring-blurple">
+          <div className="overflow-hidden rounded-[16px] ring-2 ring-primary">
             <BotAvatar size={40} />
           </div>
           <span className="h-0.5 w-7 rounded-full bg-foreground/15" />
@@ -326,15 +387,17 @@ export function CommandExplorer() {
           <div className="flex items-center gap-2 border-b border-border/60 px-3 py-3 sm:px-4">
             <button
               type="button"
+              ref={drawerTriggerRef}
               aria-label="Open command list"
+              aria-expanded={drawerOpen}
               onClick={() => setDrawerOpen(true)}
               className="grid h-8 w-8 place-items-center rounded text-foreground/60 hover:bg-foreground/5 lg:hidden"
             >
               <Menu className="h-5 w-5" />
             </button>
-            <Hash className="h-4 w-4 text-foreground/45" />
+            <Hash className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm font-semibold text-foreground">commands-demo</span>
-            <span className="ml-1 hidden truncate text-xs text-foreground/45 sm:inline">
+            <span className="ml-1 hidden truncate text-xs text-muted-foreground sm:inline">
               — how {cmd.name} runs
             </span>
             <button
@@ -347,9 +410,19 @@ export function CommandExplorer() {
             </button>
           </div>
 
-          {/* Chat (scrolls) + modal overlay */}
+          {/* Chat (scrolls) + modal overlay.
+              aria-hidden: this is an animated picture of Discord, not real
+              content. A flood injects a dozen fake messages a second apart,
+              which is unusable noise for a screen reader — and /docs/commands
+              is the accessible equivalent, linked from this page. The sr-only
+              line below is the replacement description. */}
           <div className="relative flex-1 overflow-hidden">
-            <div ref={scrollRef} className="h-full overflow-y-auto p-4 sm:p-5">
+            <p className="sr-only" role="status">
+              Animated demo of {cmd.name}: {cmd.blurb}. For a text description of every command, see
+              the command reference in the docs.
+            </p>
+            <div ref={scrollRef} aria-hidden="true" className="h-full overflow-y-auto p-4 sm:p-5">
+              {chat.length === 0 && <ChatSkeleton />}
               <div key={gen} className="space-y-4">
                 <AnimatePresence initial={false}>
                   {chat.map((item) => (
@@ -361,7 +434,7 @@ export function CommandExplorer() {
                       transition={{ duration: 0.25 }}
                       className={
                         item.glue
-                          ? "rounded-lg bg-blurple/[0.05] px-2.5 py-2 ring-1 ring-blurple/20"
+                          ? "rounded-lg bg-primary/[0.05] px-2.5 py-2 ring-1 ring-primary/20"
                           : ""
                       }
                     >
@@ -378,7 +451,7 @@ export function CommandExplorer() {
 
                 {caption && (
                   <div className="flex justify-center pt-1">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-blurple/10 px-3 py-1 text-xs font-medium text-blurple">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-accent-strong">
                       {caption.spin && <RefreshCw className="h-3.5 w-3.5 animate-spin" />}
                       {caption.text}
                     </span>
@@ -416,7 +489,7 @@ export function CommandExplorer() {
           {/* Message bar (shows the command being typed) */}
           <div className="border-t border-border/60 p-3">
             <div className="flex items-center gap-2 rounded-lg bg-discord-elevated px-3 py-2.5">
-              <Plus className="h-4 w-4 shrink-0 text-foreground/40" />
+              <Plus className="h-4 w-4 shrink-0 text-muted-foreground" />
               <div className="min-w-0 flex-1 truncate text-sm">
                 {inputText ? (
                   <span className="font-mono text-foreground/90">
@@ -424,10 +497,10 @@ export function CommandExplorer() {
                     <span className="ml-px animate-pulse">|</span>
                   </span>
                 ) : (
-                  <span className="text-foreground/35">Message #commands-demo</span>
+                  <span className="text-muted-foreground">Message #commands-demo</span>
                 )}
               </div>
-              <SmilePlus className="ml-auto h-4 w-4 shrink-0 text-foreground/30" />
+              <SmilePlus className="ml-auto h-4 w-4 shrink-0 text-muted-foreground" />
             </div>
           </div>
         </div>
@@ -441,9 +514,19 @@ export function CommandExplorer() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Command list"
           >
-            <div className="absolute inset-0 bg-black/50" onClick={() => setDrawerOpen(false)} />
+            {/* Backdrop is presentational — Escape and the Close button are the
+                keyboard-accessible ways out (see the keydown effect above). */}
+            <div
+              className="absolute inset-0 bg-black/50"
+              onClick={() => setDrawerOpen(false)}
+              aria-hidden="true"
+            />
             <motion.div
+              ref={drawerRef}
               initial={{ x: -280 }}
               animate={{ x: 0 }}
               exit={{ x: -280 }}

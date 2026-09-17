@@ -122,6 +122,11 @@ export const COMMANDS: CommandDef[] = [
             placeholder: "Type your multi-line message…",
             value: PARA,
           },
+          {
+            label: "Suppress link previews?",
+            select: true,
+            value: "No — show link previews (default)",
+          },
         ],
       },
       {
@@ -139,7 +144,8 @@ export const COMMANDS: CommandDef[] = [
     name: "/glueembed",
     group: "core",
     blurb: "Glue a rich embed",
-    options: [{ name: "image", value: "banner.png" }],
+    // No slash options: /glueembed takes none. Both images are uploaded inside
+    // the modal below as file-upload components (commands/glueembed.js:66-79).
     script: [
       { a: "type" },
       { a: "invoke" },
@@ -147,16 +153,30 @@ export const COMMANDS: CommandDef[] = [
         a: "modal",
         title: "Create Embed Message",
         fields: [
-          { label: "Embed Title", placeholder: "Add a title", value: "🎉 Server Events" },
           {
-            label: "Embed Description",
+            label: "Embed Title (max 256 characters)",
+            placeholder: "Add a title",
+            value: "🎉 Server Events",
+          },
+          {
+            label: "Embed Description (max 4000 characters)",
             paragraph: true,
             placeholder: "Add a description",
-            value: "Everything happening this week — don't miss out!",
+            value: "Everything happening this week — don't miss out!\n\nFri · 8:00 PM UTC",
           },
-          { label: "Embed Color (#RRGGBB)", placeholder: "#66C2FF", value: "#66C2FF" },
-          { label: "Thumbnail URL", placeholder: "https://…", value: "glue-stick.jpeg" },
-          { label: "Image URL", placeholder: "https://…", value: "banner.png" },
+          { label: "Embed Color (hex code #RRGGBB)", placeholder: "#66C2FF", value: "#66C2FF" },
+          {
+            label: "Thumbnail Image (optional)",
+            hint: "PNG, JPEG, GIF or WebP. Hosted permanently; large images are resized to fit.",
+            file: true,
+            value: "glue-stick.jpeg",
+          },
+          {
+            label: "Main Image (optional)",
+            hint: "PNG, JPEG, GIF or WebP. Hosted permanently; large images are resized to fit.",
+            file: true,
+            value: "banner.png",
+          },
         ],
       },
       {
@@ -166,13 +186,9 @@ export const COMMANDS: CommandDef[] = [
             <DiscordEmbed
               accent="#66C2FF"
               title="🎉 Server Events"
-              description="Everything happening this week — don't miss out!"
+              description={"Everything happening this week — don't miss out!\n\nFri · 8:00 PM UTC"}
               thumbnail={BOT_AVATAR}
               image={EMBED_IMAGE}
-              fields={[
-                { name: "When", value: "Fri · 8:00 PM UTC", inline: true },
-                { name: "Where", value: renderContent("#events-voice"), inline: true },
-              ]}
             />
           </Glued>
         ),
@@ -183,13 +199,19 @@ export const COMMANDS: CommandDef[] = [
   {
     name: "/editglue",
     group: "core",
-    blurb: "Edit the glued message",
+    blurb: "Edit the glued message or peel an image off it",
     script: [
       {
         a: "seedGlue",
         node: (
           <Glued time="Today at 7:30 PM">
-            <p>{renderContent("Server rules: be kind, no spam, have fun!")}</p>
+            <DiscordEmbed
+              accent="#66C2FF"
+              title="🎉 Server Events"
+              description={"Everything happening this week — don't miss out!\n\nFri · 8:00 PM UTC"}
+              thumbnail={BOT_AVATAR}
+              image={EMBED_IMAGE}
+            />
           </Glued>
         ),
       },
@@ -200,28 +222,48 @@ export const COMMANDS: CommandDef[] = [
         ephemeral: true,
         node: (
           <BotMessage time="Today">
-            <p>Click the button below to open the editor for the glued message.</p>
-            <DiscordButtons buttons={[{ label: "Edit Glued Message", style: "primary" }]} />
+            <p>Use the buttons below to edit your glued message, or to peel an image off it.</p>
+            <DiscordButtons
+              buttons={[
+                { label: "Edit Glued Message", style: "primary" },
+                { label: "Remove Thumbnail", style: "danger" },
+                { label: "Remove Image", style: "danger" },
+                { label: "Remove Both Images", style: "danger" },
+              ]}
+            />
           </BotMessage>
         ),
       },
-      { a: "click", label: "Edit Glued Message" },
+      { a: "click", label: "Remove Thumbnail" },
       {
-        a: "modal",
-        title: "Edit Text Message",
-        fields: [
-          {
-            label: "Message Content",
-            paragraph: true,
-            value: "Updated rules: be kind, no spam, and check #announcements!",
-          },
-        ],
+        a: "msg",
+        ephemeral: true,
+        node: (
+          <BotMessage time="Today">
+            <p>
+              Remove <B>the thumbnail</B> from your glued embed? The message will be reposted
+              without it.
+            </p>
+            <DiscordButtons
+              buttons={[
+                { label: "Yes, remove the thumbnail", style: "danger" },
+                { label: "Cancel", style: "secondary" },
+              ]}
+            />
+          </BotMessage>
+        ),
       },
+      { a: "click", label: "Yes, remove the thumbnail" },
       {
         a: "replaceGlue",
         node: (
           <Glued>
-            <p>{renderContent("Updated rules: be kind, no spam, and check #announcements!")}</p>
+            <DiscordEmbed
+              accent="#66C2FF"
+              title="🎉 Server Events"
+              description={"Everything happening this week — don't miss out!\n\nFri · 8:00 PM UTC"}
+              image={EMBED_IMAGE}
+            />
           </Glued>
         ),
       },
@@ -230,7 +272,13 @@ export const COMMANDS: CommandDef[] = [
         ephemeral: true,
         node: (
           <BotMessage time="Today">
-            <p>Your Glued Message just got a makeover! Same channel, fresh vibes 💅</p>
+            <p>
+              Peeled the thumbnail right off — your Glued Message is freshly reposted. 🧹
+              <br />
+              <br />
+              Run <code className="rounded bg-code-bg px-1 py-0.5 font-mono">/editglue</code> again
+              for another round.
+            </p>
           </BotMessage>
         ),
       },
@@ -292,11 +340,19 @@ export const COMMANDS: CommandDef[] = [
           <BotMessage time="Today">
             <p>
               Refresh settings updated for glued message in {renderContent("#general")}:
-              <br />• Message Count: 7 messages (previously 5)
+              <br />• Message Count: 7 messages
+              <br />• Refresh Time: 15 seconds
             </p>
             <p className="text-foreground/70">
-              <B>How refresh works now:</B>
-              <br />• Refreshes after 7 messages instead of 5
+              <B>How refreshing works:</B>
+              <br />• I repost <B>15 seconds</B> after the first message that appears below your
+              glue,
+              <br />• or as soon as <B>7 messages</B> have appeared below it —
+              <br />• <B>whichever happens first.</B>
+            </p>
+            <p className="text-foreground/70">
+              The timer starts from the first new message, not from when I last posted, and I never
+              repost while your glue is already the newest message in the channel.
             </p>
           </BotMessage>
         ),

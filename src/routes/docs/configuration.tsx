@@ -3,11 +3,12 @@ import { Callout } from "@/components/docs/Callout";
 import { CodeBlock } from "@/components/docs/CodeBlock";
 import { DocsHeading } from "@/components/docs/DocsHeading";
 import { DocsPage } from "@/components/docs/DocsPage";
-import { seo } from "@/lib/seo";
+import { docsSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/docs/configuration")({
   head: () =>
-    seo({
+    docsSeo({
+      breadcrumb: "Configuration",
       title: "Configuration — Glue Stick Docs",
       description:
         "How Glue Stick's refresh triggers work — message count and time thresholds — and how to tune them per channel with /refreshconfig.",
@@ -18,12 +19,13 @@ export const Route = createFileRoute("/docs/configuration")({
 
 const TOC = [
   { id: "how-refreshing-works", label: "How refreshing works" },
+  { id: "what-a-refresh-does", label: "What a refresh actually does" },
   { id: "tuning", label: "Tuning with /refreshconfig" },
   { id: "per-channel", label: "Per-channel settings" },
   { id: "recommendations", label: "Recommended settings" },
 ];
 
-const link = "text-sky underline-offset-4 hover:underline";
+const link = "text-accent-strong underline-offset-4 hover:underline";
 
 function ConfigurationPage() {
   return (
@@ -52,9 +54,31 @@ function ConfigurationPage() {
         bot skips the refresh entirely rather than bumping it redundantly.
       </p>
       <Callout variant="info">
-        Refreshes are silent — members don't get notification pings when the glued message refreshes (unless
-        the glued message itself contains mentions).
+        Refreshes are silent — members don't get notification pings when the glued message refreshes
+        (unless the glued message itself contains mentions).
       </Callout>
+
+      <DocsHeading id="what-a-refresh-does">What a refresh actually does</DocsHeading>
+      <p>
+        A refresh isn't Discord moving your message — that isn't something Discord allows. Glue
+        Stick <strong>posts a fresh copy at the bottom and deletes the old one</strong>, in that
+        order, so a hiccup can never leave the channel with no glue at all.
+      </p>
+      <p>The practical consequences:</p>
+      <ul>
+        <li>
+          The glued message gets a <strong>new message link every refresh</strong>. Reactions,
+          replies and pins on the previous copy don't carry over.
+        </li>
+        <li>
+          Because of that, don't pin a glued message or ask members to react to it — point them at a
+          normal message instead.
+        </li>
+        <li>
+          If the glue is already the newest message in the channel, the refresh is skipped entirely
+          rather than reposting redundantly.
+        </li>
+      </ul>
 
       <DocsHeading id="tuning">Tuning with /refreshconfig</DocsHeading>
       <p>View the current settings for a channel:</p>
@@ -63,10 +87,10 @@ function ConfigurationPage() {
       <CodeBlock className="mt-3">/refreshconfig messagecount:10 refreshtime:60</CodeBlock>
       <ul>
         <li>
-          <code>messagecount</code> accepts <strong>5–50</strong> messages.
+          <code>messagecount</code> accepts <strong>5–500</strong> messages.
         </li>
         <li>
-          <code>refreshtime</code> accepts <strong>15–3600</strong> seconds (15 s to 1 hour).
+          <code>refreshtime</code> accepts <strong>15–86400</strong> seconds (15 s to 24 hours).
         </li>
         <li>
           The optional <code>channel</code> argument lets you configure another glued channel
@@ -74,8 +98,11 @@ function ConfigurationPage() {
         </li>
       </ul>
       <p>
-        After you change settings, the very next message in the channel triggers an immediate
-        refresh so you can confirm the glue is alive. Full option details are in the{" "}
+        Changes apply to the cycle already in progress, so shortening the time on a glue that's
+        already waiting can make it refresh right away. If the channel has already passed the new
+        message count and the glue is buried, it refreshes immediately — but a quiet channel is left
+        alone rather than being bumped just to prove the setting took. Full option details are in
+        the{" "}
         <Link to="/docs/commands" hash="refreshconfig" className={link}>
           command reference
         </Link>
@@ -90,7 +117,7 @@ function ConfigurationPage() {
         </li>
         <li>
           Each channel holds exactly <strong>one</strong> glued message; gluing again replaces it
-          (with default thresholds, so re-tune after re-gluing).
+          and <strong>keeps the channel's thresholds</strong> — you don't need to re-tune.
         </li>
         <li>
           Editing with <code>/editglue</code> keeps the channel's thresholds.
@@ -111,6 +138,11 @@ function ConfigurationPage() {
         <li>
           <strong>Event or support channels</strong> — keep <code>messagecount</code> low so the key
           message snaps back quickly during activity spikes.
+        </li>
+        <li>
+          <strong>Very quiet channels</strong> — because <code>refreshtime</code> goes up to 24
+          hours and <code>messagecount</code> up to 500, you can set a glue that only resurfaces
+          once a day, or only after a real conversation has happened.
         </li>
       </ul>
     </DocsPage>

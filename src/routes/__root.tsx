@@ -11,28 +11,8 @@ import type { ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { ThemeProvider, NO_FLASH_SCRIPT } from "../lib/theme";
-
-function NotFoundComponent() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
-        </p>
-        <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Go home
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-}
+import { NotFound } from "../components/site/NotFound";
+import { Button } from "../components/ui/button";
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
@@ -48,21 +28,17 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           Something went wrong on our end. You can try refreshing or head back home.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <button
+          <Button
             onClick={() => {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
             Try again
-          </button>
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-          >
-            Go home
-          </Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link to="/">Go home</Link>
+          </Button>
         </div>
       </div>
     </div>
@@ -121,7 +97,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   }),
   shellComponent: RootShell,
   component: RootComponent,
-  notFoundComponent: NotFoundComponent,
+  notFoundComponent: NotFound,
   errorComponent: ErrorComponent,
 });
 
@@ -131,9 +107,24 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         {/* Apply the saved/OS theme before paint to avoid a flash. */}
         <script dangerouslySetInnerHTML={{ __html: NO_FLASH_SCRIPT }} />
-        {/* Raw JSX (not head()): head() meta dedupes by name and would drop one of the pair. */}
+        {/* Raw JSX (not head()): head() meta dedupes by name and would drop one of the pair.
+
+            These are the sRGB equivalents of --background in styles.css
+            (:root and .dark respectively). The browser chrome can't read oklch
+            custom properties, so they're hand-converted and will NOT follow
+            automatically — if --background changes, update both here and the
+            background_color/theme_color in public/site.webmanifest. */}
         <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f8fafd" />
         <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#080d18" />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        {/* Framer Motion serialises `initial` into the prerendered markup, so without JS
+            those elements stay at opacity:0 forever — on the homepage that hides the h1,
+            the lede, both CTAs, the mockup and every feature card. Reveal them when
+            scripting is unavailable. Keep in sync with the `initial` props in
+            routes/index.tsx, ChatMockup.tsx and GlueDemo.tsx. */}
+        <noscript>
+          <style>{`[style*="opacity:0"]{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
         <HeadContent />
       </head>
       <body>

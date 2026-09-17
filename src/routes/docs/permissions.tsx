@@ -4,11 +4,12 @@ import { CodeBlock } from "@/components/docs/CodeBlock";
 import { DocsHeading } from "@/components/docs/DocsHeading";
 import { DocsPage } from "@/components/docs/DocsPage";
 import { INVITE_URL } from "@/lib/links";
-import { seo } from "@/lib/seo";
+import { docsSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/docs/permissions")({
   head: () =>
-    seo({
+    docsSeo({
+      breadcrumb: "Permissions",
       title: "Permissions — Glue Stick Docs",
       description:
         "What each Discord permission is used for, how to verify them with /permcheck, and how to restrict who can use Glue Stick's commands.",
@@ -26,11 +27,17 @@ const TOC = [
   { id: "lost-permissions", label: "When permissions go missing" },
 ];
 
-const link = "text-sky underline-offset-4 hover:underline";
+const link = "text-accent-strong underline-offset-4 hover:underline";
 
 function PermTable({ rows }: { rows: [string, string][] }) {
+  // tabIndex + role: a scrollable box must be keyboard-reachable (WCAG 2.1.1).
   return (
-    <div className="mt-4 overflow-x-auto rounded-lg border border-border">
+    <div
+      className="mt-4 overflow-x-auto rounded-lg border border-border"
+      tabIndex={0}
+      role="region"
+      aria-label="Permissions"
+    >
       <table className="w-full min-w-[480px] border-collapse text-sm">
         <thead>
           <tr className="border-b border-border bg-foreground/5 text-left">
@@ -144,10 +151,29 @@ function PermissionsPage() {
 
       <DocsHeading id="lost-permissions">When permissions go missing</DocsHeading>
       <p>
-        If the bot loses access to a channel (deleted channel, revoked View Channel, and so on), it
-        can't maintain the glue there. After a failed refresh, the glue is <strong>removed</strong>{" "}
-        rather than endlessly retried. Once you restore the permissions, just glue the message again
-        — and see the{" "}
+        If the bot loses access to a channel it can't maintain the glue there — but it doesn't throw
+        the glue away at the first sign of trouble. A transient network or Discord error never
+        deletes anything.
+      </p>
+      <ul>
+        <li>
+          A glue the bot genuinely can't post in (a locked thread, a revoked permission) is{" "}
+          <strong>flagged and kept for 7 days</strong>, then retired only if it's still broken.
+          Restore access inside that window and it resumes on its own — no need to re-glue.
+        </li>
+        <li>
+          <Link to="/docs/commands" hash="listglues" className={link}>
+            <code>/listglues</code>
+          </Link>{" "}
+          is where you see which glues are flagged and when each is due to be removed.
+        </li>
+        <li>
+          A <strong>deleted channel</strong> is the exception — that glue is removed straight away,
+          since there's nothing left to post into.
+        </li>
+      </ul>
+      <p>
+        See the{" "}
         <Link to="/docs/faq" hash="stopped-refreshing" className={link}>
           FAQ entry
         </Link>{" "}

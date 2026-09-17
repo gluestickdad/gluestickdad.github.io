@@ -5,18 +5,11 @@ import { DocsPager } from "./DocsPager";
 import { DocsToc, type TocItem } from "./DocsToc";
 
 /**
- * Body-copy defaults for docs prose, mirroring LegalLayout. Inline `code` is
- * scoped with :not(pre)>code so CodeBlock's <pre><code> is left alone; links
- * are styled explicitly at the call site, not here.
+ * Docs prose uses the shared `prose-site` utility from styles.css — the same
+ * one the legal pages use, so the two can no longer drift. Links stay styled at
+ * the call site, as they always have.
  */
-const PROSE =
-  "mt-8 text-[15px] leading-relaxed text-foreground/85 [&_p]:mt-3 " +
-  "[&_ul]:mt-3 [&_ul]:list-disc [&_ul]:space-y-1.5 [&_ul]:pl-6 " +
-  "[&_ol]:mt-3 [&_ol]:list-decimal [&_ol]:space-y-1.5 [&_ol]:pl-6 " +
-  "[&_strong]:text-foreground " +
-  "[&_:not(pre)>code]:rounded [&_:not(pre)>code]:bg-code-bg [&_:not(pre)>code]:px-1.5 " +
-  "[&_:not(pre)>code]:py-0.5 [&_:not(pre)>code]:font-mono [&_:not(pre)>code]:text-[0.85em] " +
-  "[&_:not(pre)>code]:text-code-fg";
+const PROSE = "prose-site mt-8";
 
 /** Standard docs article: h1 + lede, optional TOC (inline < xl, right rail ≥ xl), pager. */
 export function DocsPage({

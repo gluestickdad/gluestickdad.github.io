@@ -3,12 +3,14 @@ import { Bug, LifeBuoy, ThumbsUp } from "lucide-react";
 import { CodeBlock } from "@/components/docs/CodeBlock";
 import { DocsHeading } from "@/components/docs/DocsHeading";
 import { DocsPage } from "@/components/docs/DocsPage";
+import { Button } from "@/components/ui/button";
 import { SUPPORT_URL, VOTE_URL } from "@/lib/links";
-import { seo } from "@/lib/seo";
+import { docsSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/docs/support")({
   head: () =>
-    seo({
+    docsSeo({
+      breadcrumb: "Support",
       title: "Support — Glue Stick Docs",
       description:
         "Get help with Glue Stick: join the support server, report bugs effectively, and vote to support development.",
@@ -23,7 +25,7 @@ const TOC = [
   { id: "vote", label: "Vote for Glue Stick" },
 ];
 
-const link = "text-sky underline-offset-4 hover:underline";
+const link = "text-accent-strong underline-offset-4 hover:underline";
 
 function SupportPage() {
   return (
@@ -37,21 +39,18 @@ function SupportPage() {
         The fastest way to get help is the official support server — assistance, update
         announcements, and other Glue Stick users:
       </p>
-      <a
-        href={SUPPORT_URL}
-        target="_blank"
-        rel="noreferrer"
-        className="btn-glow mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#5865F2] to-[#66C2FF] px-6 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.03]"
-      >
-        <LifeBuoy className="h-4 w-4" />
-        Join the Support Server
-      </a>
+      <Button asChild size="lg" className="mt-4">
+        <a href={SUPPORT_URL} target="_blank" rel="noreferrer">
+          <LifeBuoy className="h-4 w-4" />
+          Join the Support Server
+        </a>
+      </Button>
       <p>
         You can also grab the invite from inside Discord anytime with <code>/support</code>.
       </p>
 
       <DocsHeading id="reporting-bugs">
-        <Bug className="mr-2 inline h-5 w-5 text-sky" aria-hidden />
+        <Bug className="mr-2 inline h-5 w-5 text-accent-strong" aria-hidden />
         Reporting bugs
       </DocsHeading>
       <p>A report we can reproduce is a report we can fix. Before posting, grab two things:</p>
@@ -75,7 +74,7 @@ function SupportPage() {
       </ul>
 
       <DocsHeading id="vote">
-        <ThumbsUp className="mr-2 inline h-5 w-5 text-sky" aria-hidden />
+        <ThumbsUp className="mr-2 inline h-5 w-5 text-accent-strong" aria-hidden />
         Vote for Glue Stick
       </DocsHeading>
       <p>

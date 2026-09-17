@@ -19,7 +19,7 @@ const pub = path.join(root, "public");
 const srcDir = path.join(root, "assets-src");
 
 mkdirSync(srcDir, { recursive: true });
-for (const name of ["banner-dark.png", "banner-light.png"]) {
+for (const name of ["banner-dark.png", "banner-light.png", "glue-stick-avatar.jpeg"]) {
   const from = path.join(pub, name);
   const to = path.join(srcDir, name);
   if (!existsSync(to) && existsSync(from)) {
@@ -28,11 +28,30 @@ for (const name of ["banner-dark.png", "banner-light.png"]) {
   }
 }
 
-const avatar = path.join(pub, "glue-stick-avatar.jpeg");
+const avatar = path.join(srcDir, "glue-stick-avatar.jpeg");
 
 function report(file: string) {
   const kb = (statSync(file).size / 1024).toFixed(1);
   console.log(`${path.relative(root, file)}  ${kb} KB`);
+}
+
+/**
+ * The bot avatar as actually displayed: 36-40 CSS px in the Logo and the chat
+ * mockups. The 90 KB source was being shipped whole to paint 36 pixels, on
+ * first paint of every route. 80px covers 2x displays; the PNG is the fallback
+ * for the <picture> in Logo.tsx / discord/index.tsx.
+ */
+async function avatarVariants() {
+  const webpOut = path.join(pub, "avatar-80.webp");
+  await sharp(avatar).resize(80, 80, { fit: "cover" }).webp({ quality: 82 }).toFile(webpOut);
+  report(webpOut);
+
+  const pngOut = path.join(pub, "avatar-80.png");
+  await sharp(avatar)
+    .resize(80, 80, { fit: "cover" })
+    .png({ compressionLevel: 9, palette: true, quality: 88 })
+    .toFile(pngOut);
+  report(pngOut);
 }
 
 async function icons() {
@@ -44,7 +63,11 @@ async function icons() {
   };
   for (const [name, size] of Object.entries(sizes)) {
     const out = path.join(pub, name);
-    await sharp(avatar).resize(size, size, { fit: "cover" }).png().toFile(out);
+    // palette + compressionLevel 9: icon-512 was 212 KB as a truecolor PNG.
+    await sharp(avatar)
+      .resize(size, size, { fit: "cover" })
+      .png({ compressionLevel: 9, palette: true, quality: 90 })
+      .toFile(out);
     report(out);
   }
   const icoPngs = await Promise.all(
@@ -82,6 +105,7 @@ async function ogImage() {
   report(out);
 }
 
+await avatarVariants();
 await icons();
 await banners();
 await ogImage();

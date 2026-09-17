@@ -17,7 +17,7 @@ function SearchButton({ onOpen, className }: { onOpen: () => void; className?: s
     >
       <Search className="h-3.5 w-3.5" />
       <span>Search docs…</span>
-      <kbd className="ml-auto rounded border border-border bg-background px-1.5 font-mono text-[10px] text-muted-foreground">
+      <kbd className="ml-auto rounded-md border border-border bg-background px-1.5 font-mono text-xs text-muted-foreground">
         Ctrl K
       </kbd>
     </button>
