@@ -13,6 +13,19 @@ const docsLink = "text-accent-strong underline-offset-4 hover:underline";
 
 export const FAQ_ITEMS: FaqItem[] = [
   {
+    slug: "is-it-free",
+    question: "Is Glue Stick free?",
+    answer: (
+      <p>
+        Yes, <strong>completely</strong>. Every command and setting works in every server at no
+        cost: there's no premium tier, membership, paywall or vote-lock. There's also no limit on
+        how many channels you can glue.
+      </p>
+    ),
+    plain:
+      "Yes, completely. Every command and setting works in every server at no cost: no premium tier, membership, paywall or vote-lock, and no limit on how many channels you can glue.",
+  },
+  {
     slug: "stopped-refreshing",
     question: "Why did my glued message stop refreshing?",
     answer: (
