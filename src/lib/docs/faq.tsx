@@ -114,6 +114,30 @@ export const FAQ_ITEMS: FaqItem[] = [
       "No — one glued message per channel; gluing again replaces it. No limit on the number of channels, and threads count separately.",
   },
   {
+    slug: "glue-media",
+    question: "Can I glue videos, images or GIFs?",
+    answer: (
+      <>
+        <p>
+          Yes, as a link. Glue the link with <code>/glue</code> or <code>/gluepara</code> and
+          Discord shows the video, image or GIF right in the channel, as long as link previews
+          aren't turned off (they're on by default).
+        </p>
+        <p>
+          The link can come from a site like YouTube, or you can upload the file to a channel in
+          your server and copy its link. It keeps working as long as the message with the file isn't
+          deleted.
+        </p>
+        <p>
+          Want an image or GIF inside an embed instead? Upload it straight into{" "}
+          <code>/glueembed</code>. Glue Stick hosts it permanently, and GIFs stay animated.
+        </p>
+      </>
+    ),
+    plain:
+      "Yes, as a link. Glue the link with /glue or /gluepara and Discord shows the video, image or GIF in the channel, as long as link previews aren't turned off. The link can come from a site like YouTube, or upload the file to a channel in your server and copy its link; it keeps working as long as that message isn't deleted. For an image or GIF inside an embed, upload it in /glueembed: Glue Stick hosts it permanently and GIFs stay animated.",
+  },
+  {
     slug: "line-breaks",
     question: "Why did my line breaks disappear?",
     answer: (
